@@ -9,11 +9,11 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>domain</artifactId>
+    <artifactId>service</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>hero-domain</module>
-        <module>enemy-domain</module>
+        <module>hero-service</module>
+        <module>battle-service</module>
     </modules>
 
     <properties>

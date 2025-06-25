@@ -7,14 +7,10 @@
         <groupId>DMinis</groupId>
         <artifactId>RPG_demo</artifactId>
         <version>0.0.1-SNAPSHOT</version>
+        <relativePath>../../pom.xml</relativePath>
     </parent>
 
-    <artifactId>domain</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>hero-domain</module>
-        <module>enemy-domain</module>
-    </modules>
+    <artifactId>battle-domain</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>

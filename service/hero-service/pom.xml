@@ -5,16 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>DMinis</groupId>
-        <artifactId>RPG_demo</artifactId>
+        <artifactId>service</artifactId>
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>domain</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>hero-domain</module>
-        <module>enemy-domain</module>
-    </modules>
+    <artifactId>hero-service</artifactId>
 
     <properties>
         <maven.compiler.source>21</maven.compiler.source>
