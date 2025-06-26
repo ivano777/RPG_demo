@@ -41,3 +41,5 @@ target/
 .DS_Store
 Thumbs.db
 /data/
+/frontend/
+/frontend/rpg-ui/
