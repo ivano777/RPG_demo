@@ -27,10 +27,11 @@ public class Hero implements Progressable{
 
     @NotBlank
     @Size(max = 40)
+    @Column(nullable = false, unique = true)
     private String name;
 
     @Min(0)
-    private int hp = 100;
+    private int maxHp = 100;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -41,21 +42,21 @@ public class Hero implements Progressable{
             @AttributeOverride(name="level", column=@Column(name="atk_lvl")),
             @AttributeOverride(name="exp",   column=@Column(name="atk_exp"))
     })
-    private StatProgress atk;
+    private StatProgress atk = new StatProgress();
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="level", column=@Column(name="def_lvl")),
             @AttributeOverride(name="exp",   column=@Column(name="def_exp"))
     })
-    private StatProgress def;
+    private StatProgress def = new StatProgress();
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name="level", column=@Column(name="lck_lvl")),
             @AttributeOverride(name="exp",   column=@Column(name="lck_exp"))
     })
-    private StatProgress lck;
+    private StatProgress lck = new StatProgress();
 
     @Min(0)
     private int gold;

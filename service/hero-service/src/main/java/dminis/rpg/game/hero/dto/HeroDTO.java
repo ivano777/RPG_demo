@@ -14,26 +14,26 @@ public class HeroDTO {
     private String name;
 
     /* valori correnti di gioco */
-    private int hp;
-    private int gold;
+    private int maxHp = 100;
+    private int gold = 0;
 
     /* progressione globale */
-    private int level;     // max 12
-    private int exp;       // exp residua verso il prossimo livello
+    private int level = 1;     // max 12
+    private int exp = 0;       // exp residua verso il prossimo livello
 
-    private Hero.LifeStatus status;   // ALIVE | DEAD
+    private Hero.LifeStatus status = Hero.LifeStatus.ALIVE;   // ALIVE | DEAD
 
     /* statistiche con relativo livello/exp */
-    private StatDto atk;
-    private StatDto def;
-    private StatDto lck;
+    private StatDto atk = new StatDto();
+    private StatDto def = new StatDto();
+    private StatDto lck = new StatDto();
 
     /* ------------------- sotto-dto ------------------- */
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     public static class StatDto {
-        private int level;   // cap = hero.level + 10
-        private int exp;     // exp residua verso il prossimo livello
+        private int level = 1;   // cap = hero.level + 10
+        private int exp = 0;     // exp residua verso il prossimo livello
     }
 }

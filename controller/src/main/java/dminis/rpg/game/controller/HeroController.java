@@ -2,6 +2,7 @@ package dminis.rpg.game.controller;
 
 import dminis.rpg.game.hero.dto.HeroDTO;
 import dminis.rpg.game.hero.service.HeroService;
+import dminis.rpg.game.request.HeroNameRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,8 +25,14 @@ public class HeroController {
         return heroService.findById(id);
     }
 
+    @PostMapping("/create")
+    public HeroDTO create(@RequestBody HeroNameRequest name) {
+        return heroService.create(name.getName());
+    }
+
+    //todo spostare in debug
     @PostMapping
-    public HeroDTO create(@RequestBody HeroDTO hero) {
+    public HeroDTO save(@RequestBody HeroDTO hero) {
         return heroService.save(hero);
     }
 

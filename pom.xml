@@ -55,6 +55,11 @@
             </dependency>
             <dependency>
                 <groupId>DMinis</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>DMinis</groupId>
                 <artifactId>hero-domain</artifactId>
                 <version>${project.version}</version>
             </dependency>
