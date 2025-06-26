@@ -1,4 +1,4 @@
-package dminis.rpg.game.controller;
+package dminis.rpg.game.controller.hero;
 
 import dminis.rpg.game.hero.service.HeroService;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @Profile({"dev", "debug"})
 @RestController
-@RequestMapping("heroes/debug")
+@RequestMapping("debug/hero")
 @RequiredArgsConstructor
 public class DebugHeroController {
 
@@ -22,7 +22,7 @@ public class DebugHeroController {
         return "pong";
     }
 
-    @PostMapping("/reset-hero")
+    @PostMapping("/reset-heroes")
     public void resetHero() {
         service.deleteAll();
     }

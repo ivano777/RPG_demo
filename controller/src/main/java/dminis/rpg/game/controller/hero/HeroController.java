@@ -1,4 +1,4 @@
-package dminis.rpg.game.controller;
+package dminis.rpg.game.controller.hero;
 
 import dminis.rpg.game.hero.dto.HeroDTO;
 import dminis.rpg.game.hero.service.HeroService;

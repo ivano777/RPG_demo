@@ -29,6 +29,10 @@
             <groupId>DMinis</groupId>
             <artifactId>hero-service</artifactId>
         </dependency>
+        <dependency>
+            <groupId>DMinis</groupId>
+            <artifactId>enemy-service</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

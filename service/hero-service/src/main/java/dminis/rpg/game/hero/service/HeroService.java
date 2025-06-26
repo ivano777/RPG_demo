@@ -30,7 +30,9 @@ public class HeroService {
     }
 
     public HeroDTO findById(Long id){
-        return repository.findById(id).map(mapper::toDto).orElseThrow(EntityNotFoundException::new);
+        return repository.findById(id)
+                .map(mapper::toDto)
+                .orElseThrow(EntityNotFoundException::new);
     }
 
     public List<HeroDTO> findAll(){
