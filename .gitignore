@@ -40,5 +40,5 @@ target/
 # Sistema operativo
 .DS_Store
 Thumbs.db
-/data/!/.mvn/maven.config
-!/.mvn/settings.xml
+/.mvn/maven.config
+/.mvn/settings.xml
