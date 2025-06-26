@@ -12,11 +12,7 @@ export default defineConfig({
   },
     build: {
     // generate .vite/manifest.json in outDir
-    manifest: true,
-    rollupOptions: {
-      // overwrite default .html entry
-      input: '/path/to/main.js',
-    },
+    manifest: true
   },
     define: {
     'import.meta.env.VITE_API_URL': JSON.stringify('http://localhost:8080'),
