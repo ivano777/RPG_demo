@@ -140,11 +140,23 @@
                         </execution>
                     </executions>
                     <configuration>
-                        <outfile>${project.parent.basedir}/${project.parent.name}.exe</outfile> <!--todo cambiare a per puntare alla root -->
+                        <outfile>${project.parent.basedir}/${project.parent.name}.exe</outfile>
                         <jar>${project.build.directory}/${project.build.finalName}.jar</jar>
+                        <icon>${project.parent.basedir}/app.ico</icon>
                         <headerType>console</headerType> <!--todo cambiare a gui e gestire uscita -->
+<!--                        cerca la jre nel sistema operativo-->
+<!--                        <jre>-->
+<!--                            <minVersion>${java.version}</minVersion>-->
+<!--                            <opts>-->
+<!--                                <opt>-Djava.awt.headless=false</opt>-->
+<!--                                <opt>-Xmx1g</opt>-->
+<!--                            </opts>-->
+<!--                        </jre>-->
+<!--                        todo per usare la jre in bundle-->
                         <jre>
-                            <minVersion>${java.version}</minVersion><!--todo cambiare a gui e metterla bundled -->
+                            <path>jre</path>
+                            <requires64Bit>true</requires64Bit>
+                            <minVersion>21</minVersion>
                             <opts>
                                 <opt>-Djava.awt.headless=false</opt>
                                 <opt>-Xmx1g</opt>
