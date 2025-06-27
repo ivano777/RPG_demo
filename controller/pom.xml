@@ -43,7 +43,52 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>dminis.rpg.game.Application</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>
+    <profiles>
+        <profile>
+            <id>exe</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.akathist.maven.plugins.launch4j</groupId>
+                        <artifactId>launch4j-maven-plugin</artifactId>
+                        <version>${launch4j.version}</version>
+                        <executions>
+                            <execution>
+                                <id>generate-exe</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>launch4j</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <outfile>${project.parent.basedir}/${project.parent.name}.exe</outfile> <!--todo cambiare a per puntare alla root -->
+                            <jar>${project.build.directory}/${project.build.finalName}.jar</jar>
+                            <headerType>console</headerType> <!--todo cambiare a gui e gestire uscita -->
+                            <jre>
+                                <minVersion>21</minVersion><!--todo cambiare a gui e metterla bundled -->
+                                <opts>
+                                    <opt>-Djava.awt.headless=false</opt>
+                                    <opt>-Xmx1g</opt>
+                                </opts>
+                            </jre>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
