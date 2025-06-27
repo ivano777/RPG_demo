@@ -1,4 +1,6 @@
 rpg-demo.front-end.url: "http://localhost:5173"
+rpg-demo.deploy.url: "http://localhost:8080"
+
 spring:
   profiles:
     active: dev,debug,demo

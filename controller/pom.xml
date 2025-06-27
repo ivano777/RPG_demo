@@ -12,8 +12,8 @@
     <artifactId>controller</artifactId>
 
     <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     <dependencies>
@@ -61,6 +61,70 @@
             <id>exe</id>
             <build>
                 <plugins>
+
+                    <!-- 1) Esegue npm ci + npm run build -->
+                    <plugin>
+                        <groupId>com.github.eirslett</groupId>
+                        <artifactId>frontend-maven-plugin</artifactId>
+                        <configuration>
+                            <workingDirectory>${project.parent.basedir}/frontend/rpg-ui</workingDirectory>
+                        </configuration>
+
+                        <executions>
+                            <!-- installa node e npm solo la prima volta -->
+                            <execution>
+                                <id>install-node-and-npm</id>
+                                <goals>
+                                    <goal>install-node-and-npm</goal>
+                                </goals>
+                                <configuration>
+                                    <nodeVersion>${node.version}</nodeVersion>
+                                    <npmVersion>${npm.version}</npmVersion>
+                                </configuration>
+                            </execution>
+
+                            <!-- npm ci -->
+                            <execution>
+                                <id>npm-ci</id>
+                                <goals><goal>npm</goal></goals>
+                                <configuration>
+                                    <arguments>ci</arguments>
+                                </configuration>
+                            </execution>
+
+                            <!-- npm run build -->
+                            <execution>
+                                <id>npm-build</id>
+                                <goals><goal>npm</goal></goals>
+                                <configuration>
+                                    <arguments>run build</arguments>
+                                </configuration>
+                                <phase>generate-resources</phase>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- 2) Copia la build nella static/ di Spring Boot -->
+                    <plugin>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-react</id>
+                                <phase>process-resources</phase>
+                                <goals><goal>copy-resources</goal></goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.parent.basedir}/frontend/rpg-ui/dist</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <!-- 3) Launch4j -->
                     <plugin>
                         <groupId>com.akathist.maven.plugins.launch4j</groupId>
                         <artifactId>launch4j-maven-plugin</artifactId>
@@ -74,18 +138,6 @@
                                 </goals>
                             </execution>
                         </executions>
-                        <configuration>
-                            <outfile>${project.parent.basedir}/${project.parent.name}.exe</outfile> <!--todo cambiare a per puntare alla root -->
-                            <jar>${project.build.directory}/${project.build.finalName}.jar</jar>
-                            <headerType>console</headerType> <!--todo cambiare a gui e gestire uscita -->
-                            <jre>
-                                <minVersion>21</minVersion><!--todo cambiare a gui e metterla bundled -->
-                                <opts>
-                                    <opt>-Djava.awt.headless=false</opt>
-                                    <opt>-Xmx1g</opt>
-                                </opts>
-                            </jre>
-                        </configuration>
                     </plugin>
                 </plugins>
             </build>
