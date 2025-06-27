@@ -42,3 +42,4 @@ target/
 Thumbs.db
 /.mvn/maven.config
 /.mvn/settings.xml
+/data/
