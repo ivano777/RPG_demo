@@ -43,3 +43,5 @@ Thumbs.db
 /.mvn/maven.config
 /.mvn/settings.xml
 /data/
+frontend/rpg-ui/node/
+/RPG_demo.exe
