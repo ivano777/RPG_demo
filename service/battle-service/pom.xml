@@ -16,5 +16,19 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+    <dependencies>
+        <dependency>
+            <groupId>DMinis</groupId>
+            <artifactId>hero-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>DMinis</groupId>
+            <artifactId>enemy-service</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>DMinis</groupId>
+            <artifactId>battle-domain</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

@@ -30,3 +30,11 @@ export async function getHeroes(): Promise<HeroDTO[]> {
   }
   return await res.json()
 }
+
+export async function getHeroById(id: number): Promise<HeroDTO> {
+  const res = await fetch(`${BASE_URL}/heroes/${id}`)
+  if (!res.ok) {
+    throw new Error(`Errore ${res.status} nel recupero eroi`)
+  }
+  return await res.json()
+}

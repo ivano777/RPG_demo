@@ -1,1 +1,2 @@
-rpg-demo.front-end.url: "http://localhost:3000"
+rpg-demo.front-end.url: "http://localhost:8080"
+rpg-demo.deploy.url: "http://localhost:8080"

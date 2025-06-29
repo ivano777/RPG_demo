@@ -1,9 +1,9 @@
 rpg-demo.front-end.url: "http://localhost:5173"
-rpg-demo.deploy.url: "http://localhost:8080"
+rpg-demo.deploy.url: "http://localhost:5173"
 
 spring:
   profiles:
-    active: dev,debug,demo
+    active: dev,debug
   datasource:
     url: jdbc:h2:file:./data/rpgdb;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver
@@ -15,7 +15,7 @@ spring:
       path: /h2
   jpa:
     hibernate:
-      ddl-auto: update   # o validate / create-drop, a seconda dei tuoi casi
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:

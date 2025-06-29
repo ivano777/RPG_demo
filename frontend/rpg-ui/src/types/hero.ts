@@ -1,9 +1,17 @@
+export interface Stat {
+  level: number;
+  exp: number;
+}
+
 export interface HeroDTO {
-  id: number
-  name: string
-  level: number
-  status: string
-  maxHp: number
-  gold: number
-  exp: number 
+  id: number;
+  name: string;
+  maxHp: number;
+  gold: number;
+  level: number;
+  exp: number;
+  status: string;
+  atk: Stat;
+  def: Stat;
+  lck: Stat;
 }

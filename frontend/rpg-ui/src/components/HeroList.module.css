@@ -41,3 +41,22 @@
   text-align: right;
   min-width: 50px;
 }
+
+.infoButton {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #3b82f6;
+  color: white;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin-left: 0.5rem;
+  border: none;
+}
+
+.infoButton:hover {
+  background-color: #2563eb;
+}

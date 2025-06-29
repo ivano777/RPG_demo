@@ -38,7 +38,7 @@ export default function Home() {
   }
 
   return (
-    <div className={styles.container}>
+    <div>
       <h1>Benvenuto in ChronoField!</h1>
       <p>Inserisci il nome del tuo eroe:</p>
 
