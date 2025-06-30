@@ -1,17 +1,29 @@
 package dminis.rpg.game.service;
 
 import dminis.rpg.game.dto.BattleDTO;
+import dminis.rpg.game.dto.TurnDTO;
 import dminis.rpg.game.enemy.repository.EnemyRepository;
+import dminis.rpg.game.entity.battle.Action;
+import dminis.rpg.game.entity.battle.Battle;
+import dminis.rpg.game.entity.battle.CharacterSnapshot;
+import dminis.rpg.game.entity.battle.Turn;
+import dminis.rpg.game.entity.enemy.Enemy;
 import dminis.rpg.game.hero.repository.HeroRepository;
 import dminis.rpg.game.mapper.BattleMapper;
 import dminis.rpg.game.repository.BattleRepository;
-import dminis.rpg.game.entity.Battle;
-import dminis.rpg.game.entity.CharacterSnapshot;
-import dminis.rpg.game.entity.Turn;
+import dminis.rpg.game.repository.TurnRepository;
+import dminis.rpg.game.utility.ActionUtils;
+import dminis.rpg.game.utility.DiceUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import static dminis.rpg.game.utility.BattleUtility.twist;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+
+import static dminis.rpg.game.entity.battle.Battle.BattleStatus.*;
+import static dminis.rpg.game.utility.BattleUtils.twist;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +31,7 @@ public class BattleService {
     private final EnemyRepository enemyRepository;
     private final HeroRepository heroRepository;
     private final BattleRepository battleRepository;
+    private final TurnRepository turnRepository;
     private final BattleMapper mapper;
 
     public BattleDTO resumeStartBattle(Long heroId){
@@ -26,39 +39,83 @@ public class BattleService {
         if(resume.isPresent()){
             return mapper.toDTO(resume.get());
         }
-        var heroSnap = heroRepository.findById(heroId)
-                .map(mapper::toSnap)
-                .orElseThrow();
+        var hero = heroRepository.findById(heroId).orElseThrow();
+        var heroSnap = mapper.toSnap(hero);
         var enemySnap = calculateEnemySnap(heroSnap);
         var enemyName = enemyRepository.findRandom()
-                .orElseThrow()
-                .getName();
+                .map(Enemy::getName)
+                .orElse("EnemyDummy");
+
         enemySnap.setName(enemyName);
 
         var battleToSave = new Battle();
-        battleToSave.setHeroId(heroId);
+        battleToSave.setHero(hero);
         battleToSave.setHeroSnapshot(heroSnap);
         battleToSave.setEnemySnapshot(enemySnap);
+        battleToSave.setStartingPlayer(calculateInitiative(heroSnap,enemySnap));
         var savedBattle = battleRepository.save(battleToSave);
         return mapper.toDTO(savedBattle);
     }
 
-    private CharacterSnapshot calculateEnemySnap(CharacterSnapshot heroSnap) {
-        if(heroSnap.getLevel() <= 1){
-            return heroSnap;
+    @Transactional
+    public TurnDTO playTurn(long battleId, String actionType, String actor) {
+        var battle = battleRepository.findById(battleId).orElseThrow();
+        var lastTurn = turnRepository.findTopByBattleIdOrderByIndexDesc(battleId);
+        if(TO_START.equals(battle.getStatus())){
+            battle.setStatus(ONGOING);
         }
-        return twist(heroSnap);
+        validate(battle, lastTurn, actor);
+        Turn.Actor actorEnum = Turn.Actor.valueOf(actor);
+        Action.ActionType actionTypeEnum = Action.ActionType.valueOf(actionType);
+
+        var idx = lastTurn.map(Turn::getIndex).orElse(0) +1;
+
+        var newTurn = Turn.builder()
+                .battle(battle)
+                .index(idx)
+                .actor(actorEnum)
+                .build();
+        ActionUtils.computeAction(newTurn, battle, lastTurn, actionTypeEnum);
+
+        var res = mapper.toDTO(turnRepository.save(newTurn));
+        battleRepository.save(battle);
+        return res;
     }
 
-    private int findMaxTurnIndex(Long battleId) {
-        return battleRepository.findById(battleId)
-                .orElseThrow()
-                .getTurns()
-                .stream()
-                .mapToInt(Turn::getIndex)
-                .max()
-                .orElse(-1);
+    private static void validate(Battle battle, Optional<Turn> lastTurn, String actor) {
+        Turn.Actor currentActor = Turn.Actor.valueOf(actor);
+        if(!battle.isActive()){
+            throw new IllegalStateException("Battaglia conclusa!");
+        }
+        if(ENEMY_WIN.equals(battle.getStatus()) || HERO_WIN.equals(battle.getStatus())){
+            throw new IllegalStateException("Battaglia conclusa! ->"+battle.getStatus());
+        }
+        if(lastTurn.isEmpty()){
+            if(!battle.getStartingPlayer().equals(currentActor))
+                throw new IllegalArgumentException("It's not "+actor+" turn!");
+        }else {
+            if(lastTurn.get().getActor().equals(currentActor)){
+                throw new DataIntegrityViolationException(actor + " cannot play two turns in a row!");
+            }
+            if(lastTurn.get().getCurrentEnemyHp() < 0 || lastTurn.get().getCurrentHeroHp() < 0){
+                throw new IllegalStateException("HP negativi rilevati: stato del turno non valido");
+            }
+        }
     }
 
+    private Turn.Actor calculateInitiative(CharacterSnapshot hero, CharacterSnapshot enemy){
+        var heroInitiative = DiceUtils.rollLck(hero);
+        var enemyInitiative = DiceUtils.rollLck(enemy);
+        return heroInitiative > enemyInitiative ? Turn.Actor.HERO : Turn.Actor.ENEMY;
+
+    }
+
+    private CharacterSnapshot calculateEnemySnap(CharacterSnapshot heroSnap) {
+        var enemy = heroSnap.toBuilder().build();
+        if(enemy.getLevel() <= 1){
+            return enemy;
+        }
+        return twist(enemy);
+    }
 
 }

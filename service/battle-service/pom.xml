@@ -27,7 +27,7 @@
         </dependency>
         <dependency>
             <groupId>DMinis</groupId>
-            <artifactId>battle-domain</artifactId>
+            <artifactId>domain</artifactId>
         </dependency>
     </dependencies>
 

@@ -1,13 +1,12 @@
 package dminis.rpg.game.controller.battle;
 
 import dminis.rpg.game.dto.BattleDTO;
+import dminis.rpg.game.dto.TurnDTO;
 import dminis.rpg.game.request.HeroIdRequest;
+import dminis.rpg.game.request.PlayTurnRequest;
 import dminis.rpg.game.service.BattleService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/battle")
@@ -17,7 +16,14 @@ public class BattleController {
     private final BattleService service;
 
     @PostMapping("/resume-start")
-    BattleDTO startBattle(@RequestBody HeroIdRequest heroId){
-       return service.resumeStartBattle(heroId.getId());
+    BattleDTO startBattle(@RequestBody HeroIdRequest heroId) {
+        return service.resumeStartBattle(heroId.getId());
     }
+
+    @PostMapping("/{battleId}/turn")
+    public TurnDTO playTurn(@PathVariable("battleId") long battleId,
+                            @RequestBody PlayTurnRequest req) {
+        return service.playTurn(battleId, req.getActionType(), req.getActor());
+    }
+
 }

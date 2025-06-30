@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import HeroForm from '../components/HeroForm'
 import HeroList from '../components/HeroList'
 import Message from '../components/Message'
-import styles from './Home.module.css'
 import { createHero, getHeroes } from '../api/heroApi'
 import type { HeroDTO } from '../types/hero'
 
@@ -30,7 +29,7 @@ export default function Home() {
       const newHero = await createHero(name)
       setSuccess(`Eroe "${newHero.name}" creato con successo!`)
       setError('')
-      await loadHeroes() // 👈 aggiorna la lista
+      await loadHeroes()
     } catch (err) {
       setError((err as Error).message)
       setSuccess('')

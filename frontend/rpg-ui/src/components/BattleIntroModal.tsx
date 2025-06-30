@@ -1,11 +1,14 @@
-// components/BattleIntroModal.tsx
+import type { CharacterSnapshot } from '../types/characterSnapshot'
+import { ActorTypes } from '../types/turn';
+
 interface Props {
-  hero: any; // Puoi usare un tipo più preciso se ce l'hai
-  enemy: any;
+  hero: CharacterSnapshot;
+  enemy: CharacterSnapshot;
+  starting: string
   onClose: () => void;
 }
 
-export default function BattleIntroModal({ hero, enemy, onClose }: Props) {
+export default function BattleIntroModal({ hero, enemy, starting, onClose }: Props) {
   return (
     <div style={{
       position: 'fixed',
@@ -25,7 +28,9 @@ export default function BattleIntroModal({ hero, enemy, onClose }: Props) {
         textAlign: 'center'
       }}>
         <h2>Scontro!</h2>
-        <p><strong>{hero.name}</strong> ha incontrato <strong>{enemy.name}</strong>!</p>
+        <p><strong>{hero.name} Lv. {hero.level}</strong> ha incontrato <strong>{enemy.name} Lv. {hero.level}</strong>!</p>
+        <p><strong>{(starting === ActorTypes.HERO ? hero.name : enemy.name)} è stato più veloce, sarà il primo ad attaccare</strong>!</p>
+
         <p>Preparati alla battaglia...</p>
         <button style={{ marginTop: '1rem' }} onClick={onClose}>Inizia</button>
       </div>

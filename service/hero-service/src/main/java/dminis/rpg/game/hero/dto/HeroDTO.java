@@ -1,6 +1,6 @@
 package dminis.rpg.game.hero.dto;
 
-import dminis.rpg.game.hero.entity.Hero;
+import dminis.rpg.game.entity.hero.Hero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,7 @@ public class HeroDTO {
     private String name;
 
     /* valori correnti di gioco */
-    private int maxHp = 100;
+    private int maxHp = 10;
     private int gold = 0;
 
     /* progressione globale */

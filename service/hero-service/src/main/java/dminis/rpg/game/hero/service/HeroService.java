@@ -1,8 +1,8 @@
 package dminis.rpg.game.hero.service;
 
+import dminis.rpg.game.entity.hero.Hero;
 import dminis.rpg.game.error.EntityAlreadyExistsException;
 import dminis.rpg.game.hero.dto.HeroDTO;
-import dminis.rpg.game.hero.entity.Hero;
 import dminis.rpg.game.hero.mapper.HeroMapper;
 import dminis.rpg.game.hero.repository.HeroRepository;
 import jakarta.persistence.EntityNotFoundException;

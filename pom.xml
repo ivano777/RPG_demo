@@ -14,7 +14,6 @@
         <module>service</module>
         <module>service/enemy-service</module>
         <module>controller</module>
-        <module>domain/battle-domain</module>
     </modules>
 
     <properties>
@@ -65,17 +64,7 @@
             </dependency>
             <dependency>
                 <groupId>DMinis</groupId>
-                <artifactId>hero-domain</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>DMinis</groupId>
-                <artifactId>enemy-domain</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>DMinis</groupId>
-                <artifactId>battle-domain</artifactId>
+                <artifactId>domain</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

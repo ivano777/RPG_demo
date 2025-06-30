@@ -1,6 +1,7 @@
 package dminis.rpg.game.hero.repository;
 
-import dminis.rpg.game.hero.entity.Hero;
+
+import dminis.rpg.game.entity.hero.Hero;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

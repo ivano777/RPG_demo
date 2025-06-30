@@ -1,6 +1,6 @@
 package dminis.rpg.game.enemy.repository;
 
-import dminis.rpg.game.enemy.entity.Enemy;
+import dminis.rpg.game.entity.enemy.Enemy;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 

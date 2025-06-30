@@ -1,9 +1,9 @@
 package dminis.rpg.game.enemy.service;
 
 import dminis.rpg.game.enemy.dto.EnemyDTO;
-import dminis.rpg.game.enemy.entity.Enemy;
 import dminis.rpg.game.enemy.mapper.EnemyMapper;
 import dminis.rpg.game.enemy.repository.EnemyRepository;
+import dminis.rpg.game.entity.enemy.Enemy;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -1,8 +1,8 @@
 package dminis.rpg.game.hero.mapper;
 
+import dminis.rpg.game.entity.hero.Hero;
+import dminis.rpg.game.entity.hero.StatProgress;
 import dminis.rpg.game.hero.dto.HeroDTO;
-import dminis.rpg.game.hero.entity.Hero;
-import dminis.rpg.game.hero.entity.StatProgress;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 

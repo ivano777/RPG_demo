@@ -20,6 +20,16 @@
   position: relative;
 }
 
+.battleLog {
+  flex-grow: 0.5;
+  position: relative;
+  display: flex;
+  flex-direction: column-reverse;
+  overflow-y: auto;
+  mask-image: linear-gradient(to top, transparent 0%, black 40%);
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, black 40%);
+}
+
 /* Zona hero + azioni in basso */
 .footer {
   display: flex;
@@ -63,6 +73,6 @@
 
 .barContainer {
   margin-top: 0.25rem;
-  width: 100%;
+  width: 50vw;
   max-width: 150px;
 }

@@ -19,12 +19,16 @@
     <dependencies>
         <dependency>
             <groupId>DMinis</groupId>
-            <artifactId>hero-domain</artifactId>
+            <artifactId>domain</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>DMinis</groupId>
             <artifactId>common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>DMinis</groupId>
+            <artifactId>domain</artifactId>
         </dependency>
     </dependencies>
 

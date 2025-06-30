@@ -2,7 +2,7 @@ import { useState } from 'react';
 import styles from './HeroList.module.css';
 import type { HeroDTO } from '../types/hero';
 import HeroInfoModal from './HeroInfoModal';
-import { getHeroById } from '../api/heroApi';
+import { getHeroById, resumeStartBattle } from '../api/heroApi';
 import { useNavigate } from 'react-router-dom';
 
 interface Props {
@@ -16,7 +16,7 @@ export default function HeroList({ heroes }: Props) {
 
   const handleStartBattle = async (id: number) => {
   try {
-    const data = await getHeroById(id); //todo cambiare con create enemy
+    const data = await resumeStartBattle(id);
     navigate('/battle', { state: data });
   } catch (err) {
     console.error('Errore nel lancio della battaglia', err);

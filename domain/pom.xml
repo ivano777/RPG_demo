@@ -10,11 +10,7 @@
     </parent>
 
     <artifactId>domain</artifactId>
-    <packaging>pom</packaging>
-    <modules>
-        <module>hero-domain</module>
-        <module>enemy-domain</module>
-    </modules>
+
 
     <properties>
         <maven.compiler.source>${java.version}</maven.compiler.source>

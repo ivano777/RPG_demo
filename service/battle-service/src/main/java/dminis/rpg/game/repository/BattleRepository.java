@@ -1,6 +1,6 @@
 package dminis.rpg.game.repository;
 
-import dminis.rpg.game.entity.Battle;
+import dminis.rpg.game.entity.battle.Battle;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

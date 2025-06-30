@@ -18,8 +18,8 @@ public class TurnDTO {
 
     private String actor;
 
-    private int heroHpAfter;
-    private int enemyHpAfter;
+    private int currentHeroHp;
+    private int currentEnemyHp;
 
     private ActionDTO action;
 

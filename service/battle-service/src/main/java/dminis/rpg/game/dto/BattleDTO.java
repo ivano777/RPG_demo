@@ -27,4 +27,5 @@ public class BattleDTO {
     private int version;
 
     private List<TurnDTO> turns;
+    private String startingPlayer;
 }

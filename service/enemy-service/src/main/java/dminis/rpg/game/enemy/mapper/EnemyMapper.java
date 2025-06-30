@@ -1,7 +1,7 @@
 package dminis.rpg.game.enemy.mapper;
 
 import dminis.rpg.game.enemy.dto.EnemyDTO;
-import dminis.rpg.game.enemy.entity.Enemy;
+import dminis.rpg.game.entity.enemy.Enemy;
 import org.mapstruct.InheritInverseConfiguration;
 import org.mapstruct.Mapper;
 
