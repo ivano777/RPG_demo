@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import BattleIntroModal from './BattleIntroModal';
+import BattleIntroModal from '../components/BattleIntroModal';
 import styles from './BattlePage.module.css';
-import HealthBar from './HealthBar';
+import HealthBar from '../components/HealthBar';
 import { BattleStatuses, type BattleDTO, type RewardDTO } from '../types/battle';
 import { ActionTypes, ActorTypes, type ActionType, type ActorType, type TurnDTO } from '../types/turn';
 import { applyReward, playTurn } from '../api/heroApi';
-import EndBattleModal from './EndBattleModal';
+import EndBattleModal from '../components/EndBattleModal';
 
 export default function BattlePage() {
   const navigate = useNavigate();

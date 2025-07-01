@@ -7,11 +7,15 @@
   box-sizing: border-box;
 }
 
-/* Zona del nemico in alto */
 .enemyInfo {
   align-self: flex-end;
   text-align: right;
-  color: white;
+}
+
+/* Hero info normale, non assoluta */
+.heroInfo {
+  text-align: left;
+  margin-left: 0.5rem;
 }
 
 /* Zona centrale (vuota o animazioni) */
@@ -38,13 +42,6 @@
   gap: 1rem;
 }
 
-/* Hero info normale, non assoluta */
-.heroInfo {
-  text-align: left;
-  margin-left: 0.5rem;
-  color: white;
-}
-
 /* Azioni in basso */
 .actionsGrid {
   align-self: center;
@@ -59,8 +56,6 @@
   width: 100%;
   padding: 1rem;
   font-size: 1rem;
-  background-color: #444;
-  color: white;
   border: none;
   border-radius: 8px;
   cursor: pointer;
@@ -68,9 +63,10 @@
 }
 
 .button:hover {
-  background-color: #666;
+  filter: brightness(85%);
 }
 
+/*contenitore healthbar*/
 .barContainer {
   margin-top: 0.25rem;
   width: 50vw;
