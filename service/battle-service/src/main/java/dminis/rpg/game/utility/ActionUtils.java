@@ -6,8 +6,10 @@ import dminis.rpg.game.entity.battle.Battle;
 import dminis.rpg.game.entity.battle.CharacterSnapshot;
 import dminis.rpg.game.entity.battle.Turn;
 
+import java.util.Arrays;
 import java.util.Optional;
 
+import static dminis.rpg.game.entity.battle.Turn.Actor.ENEMY;
 import static dminis.rpg.game.utility.DiceUtils.*;
 
 public class ActionUtils {
@@ -15,11 +17,11 @@ public class ActionUtils {
         int weight = 0;
         switch (newTurn.getActor()){
             case ENEMY -> {
-                weight = calculateActionWeight(battle.getEnemySnapshot(), battle.getHeroSnapshot());
+                weight = Math.max(0, rollAtk(battle.getEnemySnapshot()) - rollReactDef(battle.getHeroSnapshot()));
                 newTurn.setCurrentHeroHp(Math.max(0, newTurn.getCurrentHeroHp() - weight));
             }
             case HERO -> {
-                weight = calculateActionWeight(battle.getHeroSnapshot(), battle.getEnemySnapshot());
+                weight = Math.max(0, rollAtk(battle.getHeroSnapshot()) - rollReactDef(battle.getEnemySnapshot()));
                 newTurn.setCurrentEnemyHp(Math.max(0, newTurn.getCurrentEnemyHp() - weight));
             }
         }
@@ -36,8 +38,14 @@ public class ActionUtils {
         newTurn.setAction(action);
     }
 
-    public static int calculateActionWeight(CharacterSnapshot attacker, CharacterSnapshot defender){
-        return Math.max(0, rollAtk(attacker) - rollReactDef(defender));
+    private static void calculateEscape(Turn newTurn, Battle battle) {
+        var weight = Math.max(0, rollLck(battle.getHeroSnapshot()) - rollLck(battle.getEnemySnapshot()));
+        if(weight > 0){
+            battle.setActive(false);
+            battle.setStatus(Battle.BattleStatus.ESCAPED);
+        }
+        var action = new Action(Action.ActionType.ESCAPE, weight);
+        newTurn.setAction(action);
     }
 
     public static void calculateSkip(Turn newTurn) {
@@ -54,20 +62,23 @@ public class ActionUtils {
         }
         newTurn.setCurrentHeroHp(currentHeroHp);
         newTurn.setCurrentEnemyHp(currentEnemyHp);
-        if(Turn.Actor.ENEMY.equals(newTurn.getActor())){
-            actionTypeEnum = getRandomAction();
+        if(ENEMY.equals(newTurn.getActor())){
+            actionTypeEnum = getRandomEnemyAction();
         }
         switch (actionTypeEnum){
             case SKIP -> ActionUtils.calculateSkip(newTurn);
             case ATTACK -> ActionUtils.calculateAttack(newTurn, battle);
-            default ->  ActionUtils.calculateAttack(newTurn, battle);
+            case DEFENCE -> ActionUtils.calculateSkip(newTurn);
+            case ESCAPE -> ActionUtils.calculateEscape(newTurn, battle);
+            default ->  ActionUtils.calculateSkip(newTurn);
         }
     }
 
-    public static Action.ActionType getRandomAction() {
-        Action.ActionType[] values = Action.ActionType.values();
-        return values[RNG.nextInt(values.length)];
+    public static Action.ActionType getRandomEnemyAction() {
+        var actions = Arrays.stream(Action.ActionType.values())
+                .filter(a -> a != Action.ActionType.ESCAPE)
+                .toList();
+        return actions.get(RNG.nextInt(actions.size()));
     }
-
 }
 

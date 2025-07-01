@@ -5,7 +5,8 @@ export const BattleStatuses = {
   ONGOING: 'ONGOING', 
   ENEMY_WIN: 'ENEMY_WIN',
   HERO_WIN: 'HERO_WIN',
-  TO_START: 'TO_START'
+  TO_START: 'TO_START',
+  ESCAPED: 'ESCAPED'
 } as const;
 
 export type BattleStatus = typeof BattleStatuses[keyof typeof BattleStatuses];

@@ -154,7 +154,7 @@ public class BattleUtils {
         boolean leveled = false;
 
         // calcola quanta xp serve a ogni step e livella finché può
-        while (lv < 12 && exp >= xpToNextLevel(lv)) {
+        while (lv < 12 && exp >= xpToNextLevel(lv) && lv <= hero.getLevel()) {
             exp -= xpToNextLevel(lv);
             lvSetter.accept(hero,++lv);
             expSetter.accept(hero, exp);

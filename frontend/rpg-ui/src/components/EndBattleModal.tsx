@@ -16,13 +16,11 @@ export default function EndBattleModal({
   reward,
   onConfirm,
 }: Props) {
-  const isWinner =
-    status === BattleStatuses.HERO_WIN;
 
   return (
     <div className={styles.overlay}>
       <div className={styles.modal}>
-        {isWinner ? (
+        {status === BattleStatuses.HERO_WIN && (
           <>
             <p className={styles.title}>{heroName} ha vinto!</p>
             <div className={styles.rewardSection}>
@@ -55,10 +53,17 @@ export default function EndBattleModal({
                 </div>
             </div>
           </>
-        ) : (
+        )}
+        {status === BattleStatuses.ENEMY_WIN && (
           <>
             <p className={styles.loserTitle}>Hai perso!</p>
             <p className={styles.loserSubtitle}>Sei stato sconfitto da {enemyName}</p>
+          </>
+        )}
+        {status === BattleStatuses.ESCAPED && (
+          <>
+            <p className={styles.title}>Fuga riuscita!</p>
+            <p className={styles.loserSubtitle}>Battaglia contro {enemyName} conclusa disonorevolmente...</p>
           </>
         )}
         <button className={styles.button} onClick={onConfirm}>
