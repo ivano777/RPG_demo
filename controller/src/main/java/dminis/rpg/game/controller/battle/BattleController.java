@@ -34,7 +34,7 @@ public class BattleController {
         return service.applyReward(battleId);
     }
 
-    @PutMapping("/rewards")
+    @PostMapping("/rewards")
     public void applyRewards() {
         service.applyAllRewards();
     }
