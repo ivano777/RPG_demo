@@ -64,7 +64,7 @@ public class BattleService {
     }
 
     @Transactional
-    public RewardDTO getReward(long battleId) {
+    public RewardDTO applyReward(long battleId) {
         var battle = battleRepository.findByIdAndActiveFalseAndExpPack_TakenFalse(battleId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Nessuna battaglia trovata con id %d e ricompense non riscattate.", battleId)));
@@ -77,6 +77,7 @@ public class BattleService {
         res.setExpPack(mapper.toDTO(battle.getExpPack()));
         return res;
     }
+
 
     @Transactional
     public TurnDTO playTurn(long battleId, String actionType, String actor) {

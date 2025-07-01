@@ -30,8 +30,8 @@ public class BattleController {
     }
 
     @PutMapping("/{battleId}/reward")
-    public RewardDTO getReward(@PathVariable("battleId") long battleId) {
-        return service.getReward(battleId);
+    public RewardDTO applyReward(@PathVariable("battleId") long battleId) {
+        return service.applyReward(battleId);
     }
 
     @GetMapping

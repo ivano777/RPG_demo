@@ -82,7 +82,7 @@ export async function playTurn(battleId: number, actionType: ActionType, actor: 
   return await res.json()
 }
 
-export async function getReward(battleId: number): Promise<RewardDTO> {
+export async function applyReward(battleId: number): Promise<RewardDTO> {
   const res = await fetch(`${BASE_URL}/battle/${battleId}/reward`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' }});

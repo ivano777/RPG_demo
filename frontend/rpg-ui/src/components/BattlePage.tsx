@@ -5,7 +5,7 @@ import styles from './BattlePage.module.css';
 import HealthBar from './HealthBar';
 import { BattleStatuses, type BattleDTO, type RewardDTO } from '../types/battle';
 import { ActionTypes, ActorTypes, type ActionType, type ActorType, type TurnDTO } from '../types/turn';
-import { getReward, playTurn } from '../api/heroApi';
+import { applyReward, playTurn } from '../api/heroApi';
 import EndBattleModal from './EndBattleModal';
 
 export default function BattlePage() {
@@ -26,7 +26,7 @@ export default function BattlePage() {
 
   useEffect(() => {
     if (!battle.active) {
-    getReward(battle.id)
+    applyReward(battle.id)
       .then(res => {
         setReward(res); // salva la risposta della chiamata
         setBattleEnded(true); // mostra il modal solo dopo che hai il reward
