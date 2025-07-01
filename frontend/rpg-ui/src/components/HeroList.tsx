@@ -1,18 +1,48 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import styles from './HeroList.module.css';
 import { Statuses, type HeroDTO } from '../types/hero';
 import HeroInfoModal from './HeroInfoModal';
-import { getHeroById, resumeStartBattle } from '../api/heroApi';
-import { useNavigate } from 'react-router-dom';
+import { deleteHero, getHeroById, getHeroes, resumeStartBattle } from '../api/heroApi';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface Props {
   heroes: HeroDTO[];
 }
 
 export default function HeroList({ heroes }: Props) {
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+  const [confirmDeleteName, setConfirmDeleteName] = useState<string | null>(null);
   const [selectedHero, setSelectedHero] = useState<HeroDTO | null>(null);
   const [loading, setLoading] = useState(false);
+  const [heroList, setHeroList] = useState<HeroDTO[]>(heroes);
+
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    setHeroList(heroes);
+  }, [heroes]);
+
+  useEffect(() => {
+    const fetchHeroes = async () => {
+      const data = await getHeroes();
+      setHeroList(data);
+    };
+
+    fetchHeroes();
+  }, [location]);
+    
+  const handleDeleteHero = async (id: number) => {
+    try {
+      await deleteHero(id);
+      setConfirmDeleteId(null);
+      setConfirmDeleteName(null);
+      const updated = await getHeroes();
+      setHeroList(updated);
+    } catch (err) {
+      console.error('Errore nella cancellazione dell\'eroe', err);
+    }
+  };
 
   const handleStartBattle = async (id: number) => {
   try {
@@ -40,10 +70,19 @@ export default function HeroList({ heroes }: Props) {
   return (
     <div className={styles.container}>
       <ul className={styles.list}>
-        {heroes.map((hero) => {
+        {[...heroList].reverse().map((hero) => {
           const isDead = hero.status == Statuses.DEAD;
           return (
           <li key={hero.id} className={styles.item}>
+              <button className={styles.deleteButton}
+                title="Elimina eroe"
+                onClick={() => {
+                  setConfirmDeleteId(hero.id);
+                  setConfirmDeleteName(hero.name);
+                }}
+              >
+              -
+            </button>
             <button
               className={styles.infoButton}
               title="Mostra dettagli"
@@ -72,6 +111,17 @@ export default function HeroList({ heroes }: Props) {
           hero={selectedHero}
           onClose={() => setSelectedHero(null)}
         />
+      )}
+      {confirmDeleteId !== null && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modal}>
+            <p>Sei sicuro di voler eliminare <strong>{confirmDeleteName}</strong>?</p>
+            <div className={styles.modalActions}>
+              <button onClick={() => handleDeleteHero(confirmDeleteId)}>Sì</button>
+              <button onClick={() => setConfirmDeleteId(null)}>No</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

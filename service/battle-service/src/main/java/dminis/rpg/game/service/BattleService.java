@@ -23,7 +23,8 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 import static dminis.rpg.game.entity.battle.Battle.BattleStatus.*;
 import static dminis.rpg.game.utility.BattleUtils.twist;
@@ -36,6 +37,7 @@ public class BattleService {
     private final BattleRepository battleRepository;
     private final TurnRepository turnRepository;
     private final BattleMapper mapper;
+    private final RewardApplier rewardApplier;
 
     public BattleDTO resumeStartBattle(Long heroId){
         var resume = battleRepository.findFirstByActiveTrueAndHeroId(heroId);
@@ -68,16 +70,14 @@ public class BattleService {
         var battle = battleRepository.findByIdAndActiveFalseAndExpPack_TakenFalse(battleId)
                 .orElseThrow(() -> new EntityNotFoundException(
                         String.format("Nessuna battaglia trovata con id %d e ricompense non riscattate.", battleId)));
-        if(Hero.LifeStatus.DEAD.equals(battle.getHero().getStatus())){
-            throw new IllegalStateException("Un eroe morto non può riscuotere una ricompensa.");
-        }
-        BattleUtils.handleExpPack(battle.getExpPack(), battle.getHero());
-        var res = new RewardDTO();
-        res.setHero(mapper.toSnapDTO(battle.getHero()));
-        res.setExpPack(mapper.toDTO(battle.getExpPack()));
-        return res;
+        return rewardApplier.applyReward(battle);
     }
 
+    @Transactional
+    public void applyAllRewards(){
+        battleRepository.findByActiveFalseAndExpPack_TakenFalse()
+                .forEach(rewardApplier::applyReward);
+    }
 
     @Transactional
     public TurnDTO playTurn(long battleId, String actionType, String actor) {
@@ -114,7 +114,6 @@ public class BattleService {
         battleRepository.save(battle);
         return res;
     }
-
 
     private static void validate(Battle battle, Optional<Turn> lastTurn, String actor) {
         Turn.Actor currentActor = Turn.Actor.valueOf(actor);

@@ -34,6 +34,11 @@ public class BattleController {
         return service.applyReward(battleId);
     }
 
+    @PutMapping("/rewards")
+    public void applyRewards() {
+        service.applyAllRewards();
+    }
+
     @GetMapping
     public List<BattleDTO> getAllBattles(){
         return service.getAllBattles();

@@ -15,10 +15,10 @@ public class DiceUtils {
         return rollStat(cs.getLevel(), cs.getAtk());
     }
     public static int rollReactDef(CharacterSnapshot cs) {
-        return rollStat((int)Math.round(cs.getLevel()/2.0), cs.getLck() -1);
+        return rollStat((int)Math.round(cs.getLevel()/2.0), cs.getDef() -1);
     }
     public static int rollDef(CharacterSnapshot cs) {
-        return rollStat((int)Math.round(cs.getLevel()/4.0), cs.getLck() -2);
+        return rollStat((int)Math.round(cs.getLevel()/4.0), cs.getDef() -2);
     }
 
 

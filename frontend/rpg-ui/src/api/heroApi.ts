@@ -99,3 +99,10 @@ export async function applyReward(battleId: number): Promise<RewardDTO> {
 
   return await res.json()
 }
+
+
+export async function deleteHero(id: number){
+    await fetch(`${BASE_URL}/heroes/${id}`, {
+    method: 'DELETE',
+    headers: { 'Content-Type': 'application/json' }});
+}

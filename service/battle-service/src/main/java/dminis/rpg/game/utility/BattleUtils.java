@@ -5,7 +5,10 @@ import dminis.rpg.game.entity.battle.*;
 import dminis.rpg.game.entity.hero.Hero;
 import org.springframework.cglib.core.internal.Function;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -143,6 +146,7 @@ public class BattleUtils {
                                       BiConsumer<Hero, Integer> expSetter,  int deltaXp, boolean lvUpHP) {
         var status = hero.getStatus();
         var exp = expGetter.apply(hero) + deltaXp;
+        expSetter.accept(hero, exp);
         var lv = lvGetter.apply(hero);
 
         if (Hero.LifeStatus.DEAD.equals(status) || lv >= 12) return false;

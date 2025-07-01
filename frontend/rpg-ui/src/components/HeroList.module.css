@@ -64,3 +64,49 @@
 .infoButton:hover {
   background-color: #2563eb;
 }
+
+
+.deleteButton {
+  background-color: darkred;
+  color: white;
+  border: none;
+  padding: 0 6px;
+  border-radius: 4px;
+  margin-right: 6px;
+  cursor: pointer;
+}
+
+.modalOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal {
+  background: #222;
+  padding: 1rem;
+  border-radius: 8px;
+  color: white;
+  text-align: center;
+}
+
+.modalActions button {
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+}
+.deleteButton {
+  background-color: darkred;
+  color: white;
+  border: none;
+  padding: 0 6px;
+  border-radius: 4px;
+  margin-right: 6px;
+  cursor: pointer;
+} 
