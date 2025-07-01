@@ -45,7 +45,7 @@ public class BattleUtils {
         int defExp = calculateActionExp(battle, sortedTurns, Action.ActionType.DEFENCE);
         int lckExp = calculateLuckExp(battle, newTurn);
         int lvExp = calculateLevelExp(atkExp, defExp, lckExp, isVictory(battle));
-        var expPack = new ExpPack(lvExp, lckExp, atkExp, defExp);
+        var expPack = new ExpPack(lvExp, lckExp, atkExp, defExp, false);
         battle.setExpPack(expPack);
     }
 
@@ -118,7 +118,7 @@ public class BattleUtils {
                 .mapToInt(Action::getWeight)
                 .sum();
 
-        float baseExp = (float) relevantWeight / totalActions + enemyDifficulty * 3 * heroLevel;
+        float baseExp = (float) relevantWeight / totalActions * enemyDifficulty * heroLevel;
 
         float levelFactor = 1 + (heroLevel * 0.05f);       // +5% per livello
         float difficultyFactor = 1 + (enemyDifficulty / 100f); // es. 120 => 2.2
@@ -133,10 +133,10 @@ public class BattleUtils {
         gainHeroExp(hero, h -> h.getAtk().getLevel(), (h,v) -> h.getAtk().setLevel(v),
                 h -> h.getAtk().getExp(), (h,v) -> h.getAtk().setExp(v), expPack.getAtkExp(), false);
         gainHeroExp(hero, h -> h.getDef().getLevel(), (h,v) -> h.getDef().setLevel(v),
-                h -> h.getDef().getExp(), (h,v) -> h.getDef().setExp(v), expPack.getAtkExp(), false);
+                h -> h.getDef().getExp(), (h,v) -> h.getDef().setExp(v), expPack.getDefExp(), false);
         gainHeroExp(hero, h -> h.getLck().getLevel(), (h,v) -> h.getLck().setLevel(v),
-                h -> h.getLck().getExp(), (h,v) -> h.getLck().setExp(v), expPack.getAtkExp(), false);
-
+                h -> h.getLck().getExp(), (h,v) -> h.getLck().setExp(v), expPack.getLckExp(), false);
+        expPack.setTaken(true);
     }
 
     public static boolean gainHeroExp(Hero hero, Function<Hero, Integer> lvGetter, BiConsumer<Hero, Integer> lvSetter, Function<Hero, Integer> expGetter,

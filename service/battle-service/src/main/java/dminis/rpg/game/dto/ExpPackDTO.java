@@ -1,15 +1,13 @@
-package dminis.rpg.game.entity.battle;
+package dminis.rpg.game.dto;
 
-import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Embeddable
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class ExpPack{
+public class ExpPackDTO {
     Integer lvExp;
     Integer lckExp;
     Integer atkExp;

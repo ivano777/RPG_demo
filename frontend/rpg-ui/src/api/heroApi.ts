@@ -1,4 +1,4 @@
-import type { BattleDTO } from "../types/battle"
+import type { BattleDTO, RewardDTO } from "../types/battle"
 import type { HeroDTO } from "../types/hero"
 import type { ActionType, ActorType, TurnDTO } from "../types/turn"
 
@@ -68,6 +68,24 @@ export async function playTurn(battleId: number, actionType: ActionType, actor: 
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ actionType, actor }),
   });
+  if (!res.ok) {
+    let backendMsg = ''
+    try {
+      const data = await res.json()
+      backendMsg = data?.message ?? JSON.stringify(data)
+    } catch {
+      backendMsg = await res.text()
+    }
+    throw new Error(backendMsg || `Errore ${res.status}`)
+  }
+
+  return await res.json()
+}
+
+export async function getReward(battleId: number): Promise<RewardDTO> {
+  const res = await fetch(`${BASE_URL}/battle/${battleId}/reward`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' }});
   if (!res.ok) {
     let backendMsg = ''
     try {

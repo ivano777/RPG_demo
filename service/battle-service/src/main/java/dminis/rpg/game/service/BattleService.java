@@ -1,6 +1,7 @@
 package dminis.rpg.game.service;
 
 import dminis.rpg.game.dto.BattleDTO;
+import dminis.rpg.game.dto.RewardDTO;
 import dminis.rpg.game.dto.TurnDTO;
 import dminis.rpg.game.enemy.repository.EnemyRepository;
 import dminis.rpg.game.entity.battle.Action;
@@ -16,6 +17,7 @@ import dminis.rpg.game.repository.TurnRepository;
 import dminis.rpg.game.utility.ActionUtils;
 import dminis.rpg.game.utility.BattleUtils;
 import dminis.rpg.game.utility.DiceUtils;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -62,6 +64,21 @@ public class BattleService {
     }
 
     @Transactional
+    public RewardDTO getReward(long battleId) {
+        var battle = battleRepository.findByIdAndActiveFalseAndExpPack_TakenFalse(battleId)
+                .orElseThrow(() -> new EntityNotFoundException(
+                        String.format("Nessuna battaglia trovata con id %d e ricompense non riscattate.", battleId)));
+        if(Hero.LifeStatus.DEAD.equals(battle.getHero().getStatus())){
+            throw new IllegalStateException("Un eroe morto non può riscuotere una ricompensa.");
+        }
+        BattleUtils.handleExpPack(battle.getExpPack(), battle.getHero());
+        var res = new RewardDTO();
+        res.setHero(mapper.toSnapDTO(battle.getHero()));
+        res.setExpPack(mapper.toDTO(battle.getExpPack()));
+        return res;
+    }
+
+    @Transactional
     public TurnDTO playTurn(long battleId, String actionType, String actor) {
         var battle = battleRepository.findById(battleId).orElseThrow();
         var lastTurn = turnRepository.findTopByBattleIdOrderByIndexDesc(battleId);
@@ -88,17 +105,15 @@ public class BattleService {
         }
         var res = mapper.toDTO(turnRepository.save(newTurn));
         if(!battle.isActive()){
-            setRewards(battle, newTurn);
+            var hero = battle.getHero();
+            if(Hero.LifeStatus.ALIVE.equals(hero.getStatus())) {
+                BattleUtils.handleRewards(battle, newTurn);
+            }
         }
         battleRepository.save(battle);
         return res;
     }
 
-    private void setRewards(Battle battle, Turn newTurn) {
-        var hero = battle.getHero();
-        BattleUtils.handleRewards(battle, newTurn);
-        BattleUtils.handleExpPack(battle.getExpPack(), hero);
-    }
 
     private static void validate(Battle battle, Optional<Turn> lastTurn, String actor) {
         Turn.Actor currentActor = Turn.Actor.valueOf(actor);

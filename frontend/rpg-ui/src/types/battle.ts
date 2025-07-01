@@ -23,3 +23,17 @@ export type BattleDTO = {
   turns: TurnDTO[];
   startingPlayer: string
 };
+
+
+export type RewardDTO = {
+  hero: CharacterSnapshot;
+  expPack: ExpPackDTO;
+};
+
+export type ExpPackDTO = {
+    lvExp: number;
+    lckExp: number;
+    atkExp: number;
+    defExp: number;
+    taken: boolean;
+};

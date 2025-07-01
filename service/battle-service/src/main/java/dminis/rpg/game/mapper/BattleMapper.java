@@ -1,12 +1,7 @@
 package dminis.rpg.game.mapper;
 
-import dminis.rpg.game.dto.ActionDTO;
-import dminis.rpg.game.dto.BattleDTO;
-import dminis.rpg.game.dto.TurnDTO;
-import dminis.rpg.game.entity.battle.Action;
-import dminis.rpg.game.entity.battle.Battle;
-import dminis.rpg.game.entity.battle.CharacterSnapshot;
-import dminis.rpg.game.entity.battle.Turn;
+import dminis.rpg.game.dto.*;
+import dminis.rpg.game.entity.battle.*;
 import dminis.rpg.game.entity.hero.Hero;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -22,6 +17,11 @@ public interface BattleMapper {
     @Mapping(source = "lck.level", target = "lck")
     CharacterSnapshot toSnap(Hero hero);
 
+    @Mapping(source = "atk.level", target = "atk")
+    @Mapping(source = "def.level", target = "def")
+    @Mapping(source = "lck.level", target = "lck")
+    CharacterSnapshotDTO toSnapDTO(Hero hero);
+
     @Mappings({
             @Mapping(source = "hero.id", target = "heroId"),
             @Mapping(source = "turns", target = "turns"),
@@ -36,4 +36,8 @@ public interface BattleMapper {
             @Mapping(target = "battle.turns", ignore = true)
     })    TurnDTO toDTO(Turn source);
     ActionDTO toDTO(Action source);
+
+    CharacterSnapshotDTO toDTO(CharacterSnapshot source);
+
+    ExpPackDTO toDTO(ExpPack source);
 }

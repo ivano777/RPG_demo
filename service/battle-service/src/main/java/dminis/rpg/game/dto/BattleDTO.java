@@ -28,4 +28,5 @@ public class BattleDTO {
 
     private List<TurnDTO> turns;
     private String startingPlayer;
+    private ExpPackDTO expPack;
 }

@@ -1,6 +1,7 @@
 package dminis.rpg.game.controller.battle;
 
 import dminis.rpg.game.dto.BattleDTO;
+import dminis.rpg.game.dto.RewardDTO;
 import dminis.rpg.game.dto.TurnDTO;
 import dminis.rpg.game.request.HeroIdRequest;
 import dminis.rpg.game.request.PlayTurnRequest;
@@ -26,6 +27,11 @@ public class BattleController {
     public TurnDTO playTurn(@PathVariable("battleId") long battleId,
                             @RequestBody PlayTurnRequest req) {
         return service.playTurn(battleId, req.getActionType(), req.getActor());
+    }
+
+    @PutMapping("/{battleId}/reward")
+    public RewardDTO getReward(@PathVariable("battleId") long battleId) {
+        return service.getReward(battleId);
     }
 
     @GetMapping

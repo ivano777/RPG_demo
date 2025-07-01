@@ -3,9 +3,9 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import BattleIntroModal from './BattleIntroModal';
 import styles from './BattlePage.module.css';
 import HealthBar from './HealthBar';
-import { BattleStatuses, type BattleDTO } from '../types/battle';
+import { BattleStatuses, type BattleDTO, type RewardDTO } from '../types/battle';
 import { ActionTypes, ActorTypes, type ActionType, type ActorType, type TurnDTO } from '../types/turn';
-import { playTurn } from '../api/heroApi';
+import { getReward, playTurn } from '../api/heroApi';
 import EndBattleModal from './EndBattleModal';
 
 export default function BattlePage() {
@@ -13,7 +13,7 @@ export default function BattlePage() {
   const { state } = useLocation();
   const [battle, setBattle] = useState(state as BattleDTO);   // ✅ adesso è mutabile
   const [showModal, setShowModal] = useState(true);
-  const [showEndModal, setShowEndModal] = useState(false);
+  const [battleEnded, setBattleEnded] = useState(false);
   // ----------------------- state locali -----------------------
   const { heroSnapshot:hero, enemySnapshot:enemy } = battle || {};
   const [turns,   setTurns]   = useState<TurnDTO[]>(battle.turns ?? []);
@@ -22,12 +22,22 @@ export default function BattlePage() {
   const [enemyHp, setEnemyHp] = useState<number>(last?.currentEnemyHp ?? battle.enemySnapshot.maxHp);
   const [loading, setLoading] = useState(false);
   const [log, setLog] = useState<string[]>([]);
+  const [reward, setReward] = useState<RewardDTO>(); // o il tipo effettivo che ti ritorna il backend
 
   useEffect(() => {
-    if (battle.status === BattleStatuses.HERO_WIN || battle.status === BattleStatuses.ENEMY_WIN) {
-      setShowEndModal(true);
+    if (!battle.active) {
+    getReward(battle.id)
+      .then(res => {
+        setReward(res); // salva la risposta della chiamata
+        setBattleEnded(true); // mostra il modal solo dopo che hai il reward
+      })
+      .catch(err => {
+        console.error('Errore nel recupero della ricompensa', err);
+        setBattleEnded(true); // comunque chiudi la battaglia
+      });
     }
   }, [battle.status]);
+
 
   useEffect(() => {
     if (!showModal && battle.startingPlayer === ActorTypes.ENEMY) {
@@ -96,11 +106,12 @@ export default function BattlePage() {
         />
     )}
 
-    {showEndModal && (
+    {battleEnded && (
       <EndBattleModal
         status={battle.status}
         heroName={hero.name}
         enemyName={enemy.name}
+        reward={reward}
         onConfirm={() => navigate('/')}
       />
     )}
