@@ -25,9 +25,9 @@ public class BattleUtils {
         var target = new CharacterSnapshot();
         target.setLevel(randomInRange(0.3)*source.getLevel());
         target.setMaxHp(randomInRange(0.3)*source.getMaxHp());
-        target.setAtk(randomInRange(0.5)*source.getAtk());
-        target.setDef(randomInRange(0.5)*source.getDef());
-        target.setLck(randomInRange(0.5)*source.getLck());
+        target.getAtk().setLevel(randomInRange(0.5)*source.getAtk().getLevel());
+        target.getDef().setLevel(randomInRange(0.5)*source.getDef().getLevel());
+        target.getLck().setLevel(randomInRange(0.5)*source.getLck().getLevel());
         return target;
     }
 
@@ -62,7 +62,7 @@ public class BattleUtils {
         CharacterSnapshot enemy = battle.getEnemySnapshot();
 
         int heroLevel = hero.getLevel();
-        int enemyDifficulty = enemy.getAtk() + enemy.getDef() + enemy.getLck();
+        int enemyDifficulty = enemy.getAtk().getLevel() + enemy.getDef().getLevel() + enemy.getLck().getLevel();
         boolean victory = isVictory(battle);
 
         float exp = computeBaseExp(

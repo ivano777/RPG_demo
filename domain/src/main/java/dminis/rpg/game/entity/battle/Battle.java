@@ -30,20 +30,28 @@ public class Battle {
             @AttributeOverride(name = "name", column = @Column(name = "hero_name")),
             @AttributeOverride(name = "level", column = @Column(name = "hero_level")),
             @AttributeOverride(name = "maxHp", column = @Column(name = "hero_max_hp")),
-            @AttributeOverride(name = "atk", column = @Column(name = "hero_atk")),
-            @AttributeOverride(name = "def", column = @Column(name = "hero_def")),
-            @AttributeOverride(name = "lck", column = @Column(name = "hero_lck"))
-    })    private CharacterSnapshot heroSnapshot;
+            @AttributeOverride(name = "atk.level", column = @Column(name = "hero_atk_level")),
+            @AttributeOverride(name = "atk.flat", column = @Column(name = "hero_atk_flat")),
+            @AttributeOverride(name = "def.level", column = @Column(name = "hero_def_level")),
+            @AttributeOverride(name = "def.flat", column = @Column(name = "hero_def_flat")),
+            @AttributeOverride(name = "lck.level", column = @Column(name = "hero_lck_level")),
+            @AttributeOverride(name = "lck.flat", column = @Column(name = "hero_lck_flat"))
+    })
+    private CharacterSnapshot heroSnapshot;
 
     @Embedded
     @AttributeOverrides({
             @AttributeOverride(name = "name", column = @Column(name = "enemy_name")),
             @AttributeOverride(name = "level", column = @Column(name = "enemy_level")),
             @AttributeOverride(name = "maxHp", column = @Column(name = "enemy_max_hp")),
-            @AttributeOverride(name = "atk", column = @Column(name = "enemy_atk")),
-            @AttributeOverride(name = "def", column = @Column(name = "enemy_def")),
-            @AttributeOverride(name = "lck", column = @Column(name = "enemy_lck"))
-    })    private CharacterSnapshot enemySnapshot;
+            @AttributeOverride(name = "atk.level", column = @Column(name = "enemy_atk_level")),
+            @AttributeOverride(name = "atk.flat", column = @Column(name = "enemy_atk_flat")),
+            @AttributeOverride(name = "def.level", column = @Column(name = "enemy_def_level")),
+            @AttributeOverride(name = "def.flat", column = @Column(name = "enemy_def_flat")),
+            @AttributeOverride(name = "lck.level", column = @Column(name = "enemy_lck_level")),
+            @AttributeOverride(name = "lck.flat", column = @Column(name = "enemy_lck_flat"))
+    })
+    private CharacterSnapshot enemySnapshot;
 
     @Enumerated(EnumType.STRING)
     private BattleStatus status = BattleStatus.TO_START;

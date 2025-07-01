@@ -9,21 +9,21 @@ public class DiceUtils {
     static final SecureRandom RNG = new SecureRandom();
 
     public static int rollLck(CharacterSnapshot cs) {
-        return rollStat(cs.getLevel(), cs.getLck());
+        return rollStat(cs.getLevel(), cs.getLck().getLevel(), cs.getLck().getFlat());
     }
     public static int rollAtk(CharacterSnapshot cs) {
-        return rollStat(cs.getLevel(), cs.getAtk());
+        return rollStat(cs.getLevel(), cs.getAtk().getLevel(), cs.getAtk().getFlat());
     }
     public static int rollReactDef(CharacterSnapshot cs) {
-        return rollStat((int)Math.round(cs.getLevel()/2.0), cs.getDef() -1);
+        return rollStat((int)Math.round(cs.getLevel()/2.0), cs.getDef().getLevel() -1, cs.getDef().getFlat());
     }
     public static int rollDef(CharacterSnapshot cs) {
-        return rollStat((int)Math.round(cs.getLevel()/4.0), cs.getDef() -2);
+        return rollStat((int)Math.round(cs.getLevel()/4.0), cs.getDef().getLevel() -2, 0);
     }
 
 
-    private static int rollStat(int level, int stat) {
-        return DiceType.fromNearestValue(stat).roll(level);
+    private static int rollStat(int level, int stat, int flat) {
+        return DiceType.fromNearestValue(Math.max(0,stat)).roll(Math.max(1,level)) + flat;
     }
 
     public enum DiceType {
@@ -84,7 +84,6 @@ public class DiceUtils {
                     best = dt;
                 }
             }
-
             return best;   // non può mai essere null perché values() non è vuoto
         }
     }

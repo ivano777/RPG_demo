@@ -53,12 +53,24 @@ export default function BattlePage() {
     const current = turns.at(-1)!;
     const actorName = current.actor === ActorTypes.HERO ? hero.name : enemy.name;
     const targetName = current.actor === ActorTypes.HERO ? enemy.name : hero.name;
-    const damage = current.action.weight;
+    const actionWeight = current.action.weight;
 
     let line = `${actorName} ha usato ${current.action.type.toLowerCase()}`;
 
     if (current.action.type === ActionTypes.ATTACK) {
-      line += ` su ${targetName}, infliggendo ${damage} danni`;
+      line += ` su ${targetName}, infliggendo ${actionWeight} danni`;
+    }
+
+    if (current.action.type === ActionTypes.DEFENCE) {
+      line += ` la sua difesa statica è aumentata di ${actionWeight}`;
+    }
+
+    if (current.action.type === ActionTypes.ESCAPE) {
+      if(actionWeight <= 0){
+        line += ` fuga fallita...`;
+      }else{
+        line += ` fuga riuscita!`;        
+      }
     }
 
     setLog(prev => {
@@ -144,7 +156,7 @@ export default function BattlePage() {
     </div>
         <div className={styles.actionsGrid}>
         <button className={styles.button} onClick={() => handlePlayTurn(ActionTypes.ATTACK, ActorTypes.HERO)}>Attacca</button>
-        <button className={styles.button} onClick={() => handlePlayTurn(ActionTypes.DEFEND, ActorTypes.HERO)}>Difendi</button>
+        <button className={styles.button} onClick={() => handlePlayTurn(ActionTypes.DEFENCE, ActorTypes.HERO)}>Difendi</button>
         <button className={styles.button} onClick={() => handlePlayTurn(ActionTypes.ESCAPE, ActorTypes.HERO)}>Scappa</button>
         <button className={styles.button} onClick={() => handlePlayTurn(ActionTypes.SKIP, ActorTypes.HERO)}>Skippa</button>
         </div>

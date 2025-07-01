@@ -12,9 +12,6 @@ import java.util.List;
 @Mapper(componentModel = "spring")
 public interface BattleMapper {
 
-    @Mapping(source = "atk.level", target = "atk")
-    @Mapping(source = "def.level", target = "def")
-    @Mapping(source = "lck.level", target = "lck")
     CharacterSnapshot toSnap(Hero hero);
 
     @Mapping(source = "atk.level", target = "atk")
@@ -37,6 +34,9 @@ public interface BattleMapper {
     })    TurnDTO toDTO(Turn source);
     ActionDTO toDTO(Action source);
 
+    @Mapping(source = "atk.level", target = "atk")
+    @Mapping(source = "def.level", target = "def")
+    @Mapping(source = "lck.level", target = "lck")
     CharacterSnapshotDTO toDTO(CharacterSnapshot source);
 
     ExpPackDTO toDTO(ExpPack source);

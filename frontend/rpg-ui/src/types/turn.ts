@@ -17,7 +17,7 @@ export type TurnDTO = {
 export const ActionTypes = {
   ATTACK: 'ATTACK',
   SKIP: 'SKIP',
-  DEFEND: 'DEFEND',
+  DEFENCE: 'DEFENCE',
   ESCAPE: 'ESCAPE',
 } as const;
 

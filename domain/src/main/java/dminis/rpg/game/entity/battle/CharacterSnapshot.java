@@ -1,6 +1,7 @@
 package dminis.rpg.game.entity.battle;
 
 import jakarta.persistence.Embeddable;
+import jakarta.persistence.Embedded;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
@@ -21,9 +22,12 @@ public class CharacterSnapshot {
     @Min(1)
     private int maxHp;
     @Min(1)
-    private int atk;
+    @Embedded
+    private StatSnapshot atk = new StatSnapshot();
     @Min(1)
-    private int def;
+    @Embedded
+    private StatSnapshot def = new StatSnapshot();
     @Min(1)
-    private int lck;
+    @Embedded
+    private StatSnapshot lck = new StatSnapshot();
 }

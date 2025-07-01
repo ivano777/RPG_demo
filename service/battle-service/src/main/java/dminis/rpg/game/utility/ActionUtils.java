@@ -3,7 +3,6 @@ package dminis.rpg.game.utility;
 
 import dminis.rpg.game.entity.battle.Action;
 import dminis.rpg.game.entity.battle.Battle;
-import dminis.rpg.game.entity.battle.CharacterSnapshot;
 import dminis.rpg.game.entity.battle.Turn;
 
 import java.util.Arrays;
@@ -15,13 +14,25 @@ import static dminis.rpg.game.utility.DiceUtils.*;
 public class ActionUtils {
     public static void calculateAttack(Turn newTurn, Battle battle) {
         int weight = 0;
+        float critMod = 1f;
+        float perfMod = 1f;
         switch (newTurn.getActor()){
             case ENEMY -> {
-                weight = Math.max(0, rollAtk(battle.getEnemySnapshot()) - rollReactDef(battle.getHeroSnapshot()));
+                int lv = battle.getEnemySnapshot().getLevel();
+                if(chance(lv)) critMod = 3;
+                if(chance(lv)) perfMod = 0;
+                int dmg = Math.round(rollAtk(battle.getEnemySnapshot()) * critMod);
+                int def = Math.round(rollReactDef(battle.getHeroSnapshot()) * perfMod);
+                weight = Math.max(0, dmg - def);
                 newTurn.setCurrentHeroHp(Math.max(0, newTurn.getCurrentHeroHp() - weight));
             }
             case HERO -> {
-                weight = Math.max(0, rollAtk(battle.getHeroSnapshot()) - rollReactDef(battle.getEnemySnapshot()));
+                int lv = battle.getHeroSnapshot().getLevel();
+                if(chance(lv)) critMod = 3;
+                if(chance(lv)) perfMod = 0;
+                int dmg = Math.round(rollAtk(battle.getHeroSnapshot()) * critMod);
+                int def = Math.round(rollReactDef(battle.getEnemySnapshot()) * perfMod);
+                weight = Math.max(0, dmg - def);
                 newTurn.setCurrentEnemyHp(Math.max(0, newTurn.getCurrentEnemyHp() - weight));
             }
         }
@@ -38,9 +49,28 @@ public class ActionUtils {
         newTurn.setAction(action);
     }
 
+    private static void calculateDefence(Turn newTurn, Battle battle) {
+        int weight = 0;
+        switch (newTurn.getActor()){
+            case ENEMY -> {
+                weight = Math.max(0, rollDef(battle.getEnemySnapshot()));
+                var flatDef = battle.getEnemySnapshot().getDef().getFlat() + weight;
+                battle.getEnemySnapshot().getDef().setFlat(flatDef);
+            }
+            case HERO -> {
+                weight = Math.max(0, rollDef(battle.getHeroSnapshot()));
+                var flatDef = battle.getHeroSnapshot().getDef().getFlat() + weight;
+                battle.getHeroSnapshot().getDef().setFlat(flatDef);
+            }
+        }
+        var action = new Action(Action.ActionType.DEFENCE, weight);
+        newTurn.setAction(action);
+    }
+
     private static void calculateEscape(Turn newTurn, Battle battle) {
         var weight = Math.max(0, rollLck(battle.getHeroSnapshot()) - rollLck(battle.getEnemySnapshot()));
-        if(weight > 0){
+        var lvChance = chance(battle.getHeroSnapshot().getLevel());
+        if(weight > 0 || lvChance){
             battle.setActive(false);
             battle.setStatus(Battle.BattleStatus.ESCAPED);
         }
@@ -68,17 +98,21 @@ public class ActionUtils {
         switch (actionTypeEnum){
             case SKIP -> ActionUtils.calculateSkip(newTurn);
             case ATTACK -> ActionUtils.calculateAttack(newTurn, battle);
-            case DEFENCE -> ActionUtils.calculateSkip(newTurn);
+            case DEFENCE -> ActionUtils.calculateDefence(newTurn, battle);
             case ESCAPE -> ActionUtils.calculateEscape(newTurn, battle);
             default ->  ActionUtils.calculateSkip(newTurn);
         }
     }
 
-    public static Action.ActionType getRandomEnemyAction() {
+    private static Action.ActionType getRandomEnemyAction() {
         var actions = Arrays.stream(Action.ActionType.values())
                 .filter(a -> a != Action.ActionType.ESCAPE)
                 .toList();
         return actions.get(RNG.nextInt(actions.size()));
+    }
+
+    private static boolean chance(int chance){
+        return RNG.nextInt(100) < Math.min(99, chance);
     }
 }
 
