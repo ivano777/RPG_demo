@@ -76,42 +76,5 @@ public class Hero implements Progressable{
         ALIVE,
         DEAD
     }
-// todo spostare in service
-//    public boolean gainHeroExp(int deltaXp) {
-//        if (status == LifeStatus.DEAD || level >= 12) return false;
-//
-//        exp += deltaXp;
-//        boolean leveled = false;
-//
-//        // calcola quanta xp serve a ogni step e livella finché può
-//        while (level < 12 && exp >= xpToNextLevel()) {
-//            exp -= xpToNextLevel();
-//            leveled = true;
-//        }
-//        // se raggiungo il cap 12, azzero xp residua
-//        if (level >= 12) {
-//            level = 12;
-//            exp = 0;
-//        }
-//        return leveled;
-//    }
-//
-//    private void lvUp(){
-//        hp+=10*level;
-//        level++;
-//    }
-//
-//    private int xpToNextLevel() {
-//        return 10 + level * level;
-//    }
-//
-//    public void applyDamage(int dmg) {
-//        if (status == LifeStatus.DEAD) return;   //todo forse aggiungere exception
-//
-//        hp = Math.max(hp - dmg, 0);
-//        if (hp == 0) {
-//            status = LifeStatus.DEAD;
-//        }
-//    }
 
 }

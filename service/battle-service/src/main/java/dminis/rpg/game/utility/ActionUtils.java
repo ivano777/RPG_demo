@@ -58,12 +58,9 @@ public class ActionUtils {
             actionTypeEnum = getRandomAction();
         }
         switch (actionTypeEnum){
-            case ATTACK -> {
-                ActionUtils.calculateAttack(newTurn, battle);
-            }
-            case SKIP -> {
-                ActionUtils.calculateSkip(newTurn);
-            }
+            case SKIP -> ActionUtils.calculateSkip(newTurn);
+            case ATTACK -> ActionUtils.calculateAttack(newTurn, battle);
+            default ->  ActionUtils.calculateAttack(newTurn, battle);
         }
     }
 

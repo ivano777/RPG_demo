@@ -15,6 +15,6 @@ public class Action {
     private int weight;
 
      public enum ActionType {
-        ATTACK, SKIP
+        ATTACK, DEFENCE, ESCAPE, SKIP
     }
 }

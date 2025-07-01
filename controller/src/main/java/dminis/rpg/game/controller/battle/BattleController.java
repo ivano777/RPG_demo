@@ -8,6 +8,8 @@ import dminis.rpg.game.service.BattleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/battle")
 @RequiredArgsConstructor
@@ -24,6 +26,11 @@ public class BattleController {
     public TurnDTO playTurn(@PathVariable("battleId") long battleId,
                             @RequestBody PlayTurnRequest req) {
         return service.playTurn(battleId, req.getActionType(), req.getActor());
+    }
+
+    @GetMapping
+    public List<BattleDTO> getAllBattles(){
+        return service.getAllBattles();
     }
 
 }

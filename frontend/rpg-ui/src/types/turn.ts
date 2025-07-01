@@ -1,3 +1,4 @@
+import type { BattleDTO } from "./battle";
 import type { CharacterEnum } from "./characterEnum";
 
 export type TurnDTO = {
@@ -8,7 +9,8 @@ export type TurnDTO = {
   currentHeroHp: number;
   currentEnemyHp: number;
   action: ActionDTO;
-  creationTime: string; // ISO date
+  creationTime: string;
+  battle: BattleDTO
   
 };
 

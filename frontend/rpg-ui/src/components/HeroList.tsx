@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import styles from './HeroList.module.css';
-import type { HeroDTO } from '../types/hero';
+import { Statuses, type HeroDTO } from '../types/hero';
 import HeroInfoModal from './HeroInfoModal';
 import { getHeroById, resumeStartBattle } from '../api/heroApi';
 import { useNavigate } from 'react-router-dom';
@@ -40,7 +40,9 @@ export default function HeroList({ heroes }: Props) {
   return (
     <div className={styles.container}>
       <ul className={styles.list}>
-        {heroes.map((hero) => (
+        {heroes.map((hero) => {
+          const isDead = hero.status == Statuses.DEAD;
+          return (
           <li key={hero.id} className={styles.item}>
             <button
               className={styles.infoButton}
@@ -49,16 +51,18 @@ export default function HeroList({ heroes }: Props) {
             >
               i
             </button>
-            <span className={styles.name}>{hero.name}</span>
-            <span className={styles.level}>Lv. {hero.level}</span>
+            <span className={`${styles.name} ${isDead ? styles.deadName : ''}`}>
+              {hero.name}
+            </span>            <span className={styles.level}>Lv. {hero.level}</span>
             <button className={styles.startButton}
               title="Inizia battaglia"
               onClick={() => handleStartBattle(hero.id)}
+              disabled={isDead}
             >
               ⚔
           </button>
           </li>
-        ))}
+        )})}
       </ul>
 
       {loading && <p style={{ color: 'white', textAlign: 'center' }}>Caricamento...</p>}

@@ -1,0 +1,42 @@
+.overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 999;
+}
+
+/* box */
+.modal {
+  background: #222;
+  padding: 2rem 3rem;
+  border-radius: 1rem;
+  box-shadow: 0 0 10px #000;
+  text-align: center;
+}
+
+/* testo grande */
+.title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+/* bottone ri-usa lo stile “white on blue” tipico,
+   adatta qui se hai una classe globale */
+.button {
+  padding: 0.6rem 1.4rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  background: #266dde;
+  color: #fff;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
@@ -64,16 +65,20 @@ public class Battle {
     @Column(nullable = false)
     private Turn.Actor startingPlayer;
 
-
+    @ToString.Exclude
     @OneToMany(mappedBy = "battle", cascade = CascadeType.ALL, orphanRemoval = true, fetch =  FetchType.LAZY)
     @OrderBy("index ASC")
     private List<Turn> turns = new ArrayList<>();
 
+    @ToString.Exclude
     @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     @JoinColumn(name = "hero_id", nullable = false)
     private Hero hero;
 
+    @Embedded
+    private ExpPack expPack;
+
      public enum BattleStatus {
-        ONGOING, ENEMY_WIN, HERO_WIN, TO_START
+        ONGOING, ENEMY_WIN, HERO_WIN, TO_START, ESCAPED
     }
 }

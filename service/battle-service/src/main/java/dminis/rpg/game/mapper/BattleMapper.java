@@ -10,6 +10,9 @@ import dminis.rpg.game.entity.battle.Turn;
 import dminis.rpg.game.entity.hero.Hero;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
+
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 public interface BattleMapper {
@@ -19,9 +22,18 @@ public interface BattleMapper {
     @Mapping(source = "lck.level", target = "lck")
     CharacterSnapshot toSnap(Hero hero);
 
-    BattleDTO toDTO(Battle source);
+    @Mappings({
+            @Mapping(source = "hero.id", target = "heroId"),
+            @Mapping(source = "turns", target = "turns"),
+            @Mapping(target = "turns[].battle", ignore = true)
+    })
+    BattleDTO toDTO(Battle battle);
 
-    @Mapping(source = "battle.id", target = "battleId")
-    TurnDTO toDTO(Turn source);
+    List<BattleDTO> toDTOList (List<Battle> battle);
+
+    @Mappings({
+            @Mapping(source = "battle", target = "battle"),
+            @Mapping(target = "battle.turns", ignore = true)
+    })    TurnDTO toDTO(Turn source);
     ActionDTO toDTO(Action source);
 }

@@ -8,19 +8,20 @@ import dminis.rpg.game.entity.battle.Battle;
 import dminis.rpg.game.entity.battle.CharacterSnapshot;
 import dminis.rpg.game.entity.battle.Turn;
 import dminis.rpg.game.entity.enemy.Enemy;
+import dminis.rpg.game.entity.hero.Hero;
 import dminis.rpg.game.hero.repository.HeroRepository;
 import dminis.rpg.game.mapper.BattleMapper;
 import dminis.rpg.game.repository.BattleRepository;
 import dminis.rpg.game.repository.TurnRepository;
 import dminis.rpg.game.utility.ActionUtils;
+import dminis.rpg.game.utility.BattleUtils;
 import dminis.rpg.game.utility.DiceUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 import static dminis.rpg.game.entity.battle.Battle.BattleStatus.*;
 import static dminis.rpg.game.utility.BattleUtils.twist;
@@ -40,6 +41,9 @@ public class BattleService {
             return mapper.toDTO(resume.get());
         }
         var hero = heroRepository.findById(heroId).orElseThrow();
+        if(Hero.LifeStatus.DEAD.equals(hero.getStatus())){
+            throw new IllegalStateException("Questo eroe è morto!");
+        }
         var heroSnap = mapper.toSnap(hero);
         var enemySnap = calculateEnemySnap(heroSnap);
         var enemyName = enemyRepository.findRandom()
@@ -77,9 +81,23 @@ public class BattleService {
                 .build();
         ActionUtils.computeAction(newTurn, battle, lastTurn, actionTypeEnum);
 
+        if(newTurn.getCurrentHeroHp() <= 0 ){
+            var hero = battle.getHero();
+            hero.setStatus(Hero.LifeStatus.DEAD);
+            heroRepository.save(hero);
+        }
         var res = mapper.toDTO(turnRepository.save(newTurn));
+        if(!battle.isActive()){
+            setRewards(battle, newTurn);
+        }
         battleRepository.save(battle);
         return res;
+    }
+
+    private void setRewards(Battle battle, Turn newTurn) {
+        var hero = battle.getHero();
+        BattleUtils.handleRewards(battle, newTurn);
+        BattleUtils.handleExpPack(battle.getExpPack(), hero);
     }
 
     private static void validate(Battle battle, Optional<Turn> lastTurn, String actor) {
@@ -118,4 +136,7 @@ public class BattleService {
         return twist(enemy);
     }
 
+    public List<BattleDTO> getAllBattles() {
+        return mapper.toDTOList(battleRepository.findAll());
+    }
 }

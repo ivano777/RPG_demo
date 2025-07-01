@@ -10,8 +10,15 @@ export interface HeroDTO {
   gold: number;
   level: number;
   exp: number;
-  status: string;
+  status: Status;
   atk: Stat;
   def: Stat;
   lck: Stat;
 }
+
+export const Statuses = {
+  DEAD: 'DEAD', 
+  ALIVE: 'ALIVE'
+} as const;
+
+export type Status = typeof Statuses[keyof typeof Statuses];

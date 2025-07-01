@@ -12,7 +12,6 @@ import java.time.Instant;
 public class TurnDTO {
 
     private Long id;
-    private Long battleId;
 
     private int index;
 
@@ -24,4 +23,6 @@ public class TurnDTO {
     private ActionDTO action;
 
     private Instant creationTime;
+
+    private BattleDTO battle;
 }
