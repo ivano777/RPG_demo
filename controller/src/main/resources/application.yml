@@ -3,7 +3,7 @@ rpg-demo.deploy.url: "http://localhost:5173"
 
 spring:
   profiles:
-    active: dev,debug
+    active: dev, debug, demo
   datasource:
     url: jdbc:h2:file:./data/rpgdb;AUTO_SERVER=TRUE
     driver-class-name: org.h2.Driver

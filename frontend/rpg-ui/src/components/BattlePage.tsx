@@ -22,7 +22,7 @@ export default function BattlePage() {
   const [enemyHp, setEnemyHp] = useState<number>(last?.currentEnemyHp ?? battle.enemySnapshot.maxHp);
   const [loading, setLoading] = useState(false);
   const [log, setLog] = useState<string[]>([]);
-  const [reward, setReward] = useState<RewardDTO>(); // o il tipo effettivo che ti ritorna il backend
+  const [reward, setReward] = useState<RewardDTO>();
 
   useEffect(() => {
     if (!battle.active) {

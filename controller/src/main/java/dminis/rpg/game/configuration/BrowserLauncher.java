@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class BrowserLauncher {
 
-    @Value("${rpg-demo.deploy-end.url:http://localhost:5173}")
+    @Value("${rpg-demo.deploy.url:http://localhost:5173}")
     private String frontEndUrl;
 
     @EventListener(ApplicationReadyEvent.class)
