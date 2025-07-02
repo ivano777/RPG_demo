@@ -134,15 +134,6 @@
                         <jar>${project.build.directory}/${project.build.finalName}.jar</jar>
                         <icon>${project.parent.basedir}/app.ico</icon>
                         <headerType>console</headerType> <!--todo cambiare a gui e gestire uscita -->
-<!--                        cerca la jre nel sistema operativo-->
-<!--                        <jre>-->
-<!--                            <minVersion>${java.version}</minVersion>-->
-<!--                            <opts>-->
-<!--                                <opt>-Djava.awt.headless=false</opt>-->
-<!--                                <opt>-Xmx1g</opt>-->
-<!--                            </opts>-->
-<!--                        </jre>-->
-<!--                        todo per usare la jre in bundle-->
                         <jre>
                             <path>jre</path>
                             <requires64Bit>true</requires64Bit>
