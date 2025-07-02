@@ -14,8 +14,12 @@ spring:
       enabled: true
       path: /h2
   jpa:
+    defer-datasource-initialization: true
     hibernate:
       ddl-auto: update
+  sql:
+    init:
+      mode: always
     properties:
       hibernate:
         format_sql: true
