@@ -18,18 +18,18 @@ public class ActionUtils {
         float perfMod = 1f;
         switch (newTurn.getActor()){
             case ENEMY -> {
-                int lv = battle.getEnemySnapshot().getLevel();
-                if(chance(lv)) critMod = 3;
-                if(chance(lv)) perfMod = 0;
+                int lck = battle.getEnemySnapshot().getLck().getLevel();
+                if(chance(lck)) critMod = 3;
+                if(chance(lck)) perfMod = 0;
                 int dmg = Math.round(rollAtk(battle.getEnemySnapshot()) * critMod);
                 int def = Math.round(rollReactDef(battle.getHeroSnapshot()) * perfMod);
                 weight = Math.max(0, dmg - def);
                 newTurn.setCurrentHeroHp(Math.max(0, newTurn.getCurrentHeroHp() - weight));
             }
             case HERO -> {
-                int lv = battle.getHeroSnapshot().getLevel();
-                if(chance(lv)) critMod = 3;
-                if(chance(lv)) perfMod = 0;
+                int lck = battle.getEnemySnapshot().getLck().getLevel();
+                if(chance(lck)) critMod = 3;
+                if(chance(lck)) perfMod = 0;
                 int dmg = Math.round(rollAtk(battle.getHeroSnapshot()) * critMod);
                 int def = Math.round(rollReactDef(battle.getEnemySnapshot()) * perfMod);
                 weight = Math.max(0, dmg - def);
@@ -69,7 +69,7 @@ public class ActionUtils {
 
     private static void calculateEscape(Turn newTurn, Battle battle) {
         var weight = Math.max(0, rollLck(battle.getHeroSnapshot()) - rollLck(battle.getEnemySnapshot()));
-        var lvChance = chance(battle.getHeroSnapshot().getLevel());
+        var lvChance = chance(battle.getHeroSnapshot().getLck().getLevel());
         if(weight > 0 || lvChance){
             battle.setActive(false);
             battle.setStatus(Battle.BattleStatus.ESCAPED);
