@@ -21,7 +21,7 @@ export default function BattlePage() {
   const [heroHp,  setHeroHp]  = useState<number>(last?.currentHeroHp  ?? battle.heroSnapshot.maxHp);
   const [enemyHp, setEnemyHp] = useState<number>(last?.currentEnemyHp ?? battle.enemySnapshot.maxHp);
   const [loading, setLoading] = useState(false);
-  const [log, setLog] = useState<string[]>([]);
+  const [log, setLog] = useState<{ text: string; actor: ActorType }[]>([]);
   const [reward, setReward] = useState<RewardDTO>();
   const ENEMY_WAITING_TIME = 0;
 
@@ -75,8 +75,8 @@ export default function BattlePage() {
     }
 
     setLog(prev => {
-      const newLog = [...prev, line];
-      return newLog.slice(-3); // tiene solo gli ultimi 3
+      const newLog = [...prev, { text: line, actor: current.actor }];
+      return newLog.slice(-3);
     });
   }, [turns]);
   
@@ -140,7 +140,16 @@ export default function BattlePage() {
     <div className={styles.arena}>
       <div className={styles.battleLog}>
           {log.map((entry, i) => (
-            <p key={i}>{entry}</p>
+            <p
+              key={i}
+              className={
+                entry.actor === ActorTypes.HERO
+                  ? styles.heroText   // gradiente verde
+                  : styles.enemyText  // gradiente rosso
+              }
+            >
+              {entry.text}
+            </p>
           ))}
       </div>
         {/* eventuale spazio vuoto, animazioni, barra vita, ecc */}
