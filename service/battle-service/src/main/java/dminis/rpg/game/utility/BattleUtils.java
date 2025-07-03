@@ -74,7 +74,7 @@ public class BattleUtils {
         sortedTurns.addAll(battle.getTurns());
         sortedTurns.add(newTurn);
         int atkExp = calculateActionExp(battle, sortedTurns, Action.ActionType.ATTACK);
-        int defExp = calculateActionExp(battle, sortedTurns, Action.ActionType.DEFENCE);
+        int defExp = Math.round(calculateActionExp(battle, sortedTurns, Action.ActionType.DEFENCE) * 1.5f);
         int lckExp = calculateLuckExp(battle, newTurn);
         int lvExp = calculateLevelExp(atkExp, defExp, lckExp, isVictory(battle));
         var expPack = new ExpPack(lvExp, lckExp, atkExp, defExp, false);
@@ -113,7 +113,7 @@ public class BattleUtils {
         float hpRatio = (float) remainingHp / maxHp; // da 0.0 (morto) a 1.0 (full HP)
 
         float luckFactor = 1 - hpRatio; // più sei basso, più guadagni
-        float baseLuck = 10f ; // scalabile
+        float baseLuck = 5f ; // scalabile
         float victoryBonus = isVictory(battle) ? V_RATEO : (V_RATEO + 0.5f);
 
         float exp = baseLuck * luckFactor * victoryBonus;
@@ -172,37 +172,51 @@ public class BattleUtils {
         expPack.setTaken(true);
     }
 
-    public static boolean gainHeroExp(Hero hero, Function<Hero, Integer> lvGetter, BiConsumer<Hero, Integer> lvSetter, Function<Hero, Integer> expGetter,
-                                      BiConsumer<Hero, Integer> expSetter,  int deltaXp, boolean lvUpHP) {
-        var status = hero.getStatus();
-        var exp = expGetter.apply(hero) + deltaXp;
-        expSetter.accept(hero, exp);
-        var lv = lvGetter.apply(hero);
+    public static void gainHeroExp(Hero hero, Function<Hero, Integer> lvGetter, BiConsumer<Hero, Integer> lvSetter, Function<Hero, Integer> expGetter,
+                                   BiConsumer<Hero, Integer> expSetter, int deltaXp, boolean lvUpHP) {
 
-        if (Hero.LifeStatus.DEAD.equals(status) || lv >= 12) return false;
+        // 1) early-exit
+        if (hero.getStatus() == Hero.LifeStatus.DEAD) return;
 
-        boolean leveled = false;
+        int lv  = lvGetter.apply(hero);
+        if (lv >= 12) return;                   // già al cap
 
-        if(lvUpHP || lv < hero.getLevel()){
+        // 2) aggiorno l’EXP grezza
+        int exp = expGetter.apply(hero) + deltaXp;
 
+    /* 3) livello massimo raggiungibile in questa chiamata:
+          - HP: può salire fino a 12
+          - altre stat: non può superare il livello dell’eroe              */
+        int maxLv = lvUpHP ? 12 : hero.getLevel();
+
+        // 4) loop di crescita
+        while (lv < maxLv) {
+            int xpNeeded = xpToNextLevel(lv);
+            if (exp < xpNeeded) break;
+
+            exp -= xpNeeded;
+            lvSetter.accept(hero, ++lv);
+
+            if (lvUpHP) lvUpHp(hero);
         }
 
-        // calcola quanta xp serve a ogni step e livella finché può
-        while (lv < 12 && exp >= xpToNextLevel(lv) &&
-                (lvUpHP || lv < hero.getLevel()) //prende in considerazione la restrizione sul livello solo se lvUpHp è false (cioè se sto livellando una statistica)
-        ) {
-            exp -= xpToNextLevel(lv);
-            lvSetter.accept(hero,++lv);
-            expSetter.accept(hero, exp);
-            if(lvUpHP) lvUpHp(hero);
-            leveled = true;
+    /* 5)se ho raggiunto il limite di crescita per questa
+          chiamata, non lascio che l’EXP residua superi il “tetto”
+          necessario a salire di livello la prossima volta           */
+        if (lv == maxLv) {
+            int xpCap = xpToNextLevel(lv) - 1;   // es. servono 100 → tengo max 99
+            if (exp > xpCap) exp = xpCap;
         }
-        // se raggiungo il cap 12, azzero xp residua
+
+        // 6) se per qualunque ragione tocco il cap assoluto 12
         if (lv >= 12) {
-            lvSetter.accept(hero,12);
-            expSetter.accept(hero, 0);
+            lv = 12;
+            exp = 0;
         }
-        return leveled;
+
+        // 7) salvo i valori finali (EXP una sola volta)
+        lvSetter.accept(hero, lv);
+        expSetter.accept(hero, exp);
     }
 
     private static void lvUpHp(Hero hero){

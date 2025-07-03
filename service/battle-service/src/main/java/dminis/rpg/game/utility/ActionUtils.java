@@ -84,9 +84,11 @@ public class ActionUtils {
     }
 
     private static void calculateEscape(Turn newTurn, Battle battle) {
-        var weight = Math.max(0, rollLck(battle.getHeroSnapshot()) - rollLck(battle.getEnemySnapshot()));
+        int contrastedWeight = (rollLck(battle.getHeroSnapshot()) - rollLck(battle.getEnemySnapshot()));
+        boolean success = contrastedWeight >= 0;
+        var weight = Math.max(0, contrastedWeight);
         var lvChance = chance(battle.getHeroSnapshot().getLck().getLevel());
-        if(weight > 0 || lvChance){
+        if(success || lvChance){
             battle.setActive(false);
             battle.setStatus(Battle.BattleStatus.ESCAPED);
         }

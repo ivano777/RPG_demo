@@ -89,4 +89,8 @@ public class Battle {
      public enum BattleStatus {
         ONGOING, ENEMY_WIN, HERO_WIN, TO_START, ESCAPED
     }
+
+    public boolean addTurn(Turn turn){
+         return turns.add(turn);
+    }
 }

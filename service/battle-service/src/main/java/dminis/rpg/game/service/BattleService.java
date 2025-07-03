@@ -91,7 +91,7 @@ public class BattleService {
 
         validate(battle, lastTurn, actorEnum, actionTypeEnum);
 
-        var idx = lastTurn.map(Turn::getIndex).orElse(0) +1;
+        var idx = lastTurn.map(Turn::getIndex).orElse(0) +1; //todo partire da 0?
 
         var newTurn = Turn.builder()
                 .battle(battle)
@@ -103,17 +103,15 @@ public class BattleService {
         if(newTurn.getCurrentHeroHp() <= 0 ){
             var hero = battle.getHero();
             hero.setStatus(Hero.LifeStatus.DEAD);
-            heroRepository.save(hero);
         }
-        var res = mapper.toDTO(turnRepository.save(newTurn));
         if(!battle.isActive()){
             var hero = battle.getHero();
             if(Hero.LifeStatus.ALIVE.equals(hero.getStatus())) {
                 BattleUtils.handleRewards(battle, newTurn);
             }
         }
-        battleRepository.save(battle);
-        return res;
+        battle.addTurn(newTurn);
+        return mapper.toDTO(newTurn);
     }
 
     private static void validate(Battle battle, Optional<Turn> lastTurn, Turn.Actor actor, Action.ActionType action) {
