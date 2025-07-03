@@ -86,9 +86,10 @@ public class BattleService {
         if(TO_START.equals(battle.getStatus())){
             battle.setStatus(ONGOING);
         }
-        validate(battle, lastTurn, actor);
         Turn.Actor actorEnum = Turn.Actor.valueOf(actor);
         Action.ActionType actionTypeEnum = Action.ActionType.valueOf(actionType);
+
+        validate(battle, lastTurn, actorEnum, actionTypeEnum);
 
         var idx = lastTurn.map(Turn::getIndex).orElse(0) +1;
 
@@ -115,19 +116,22 @@ public class BattleService {
         return res;
     }
 
-    private static void validate(Battle battle, Optional<Turn> lastTurn, String actor) {
-        Turn.Actor currentActor = Turn.Actor.valueOf(actor);
+    private static void validate(Battle battle, Optional<Turn> lastTurn, Turn.Actor actor, Action.ActionType action) {
         if(!battle.isActive()){
             throw new IllegalStateException("Battaglia conclusa!");
         }
         if(ENEMY_WIN.equals(battle.getStatus()) || HERO_WIN.equals(battle.getStatus())){
             throw new IllegalStateException("Battaglia conclusa! ->"+battle.getStatus());
         }
+        if(Turn.Actor.ENEMY.equals(actor) && Action.ActionType.ESCAPE.equals(action)){
+            throw new IllegalStateException(Turn.Actor.ENEMY.name() + "cannot use " + Action.ActionType.ESCAPE.name());
+
+        }
         if(lastTurn.isEmpty()){
-            if(!battle.getStartingPlayer().equals(currentActor))
+            if(!battle.getStartingPlayer().equals(actor))
                 throw new IllegalArgumentException("It's not "+actor+" turn!");
         }else {
-            if(lastTurn.get().getActor().equals(currentActor)){
+            if(lastTurn.get().getActor().equals(actor)){
                 throw new DataIntegrityViolationException(actor + " cannot play two turns in a row!");
             }
             if(lastTurn.get().getCurrentEnemyHp() < 0 || lastTurn.get().getCurrentHeroHp() < 0){
@@ -139,7 +143,7 @@ public class BattleService {
     private Turn.Actor calculateInitiative(CharacterSnapshot hero, CharacterSnapshot enemy){
         var heroInitiative = DiceUtils.rollLck(hero);
         var enemyInitiative = DiceUtils.rollLck(enemy);
-        return heroInitiative > enemyInitiative ? Turn.Actor.HERO : Turn.Actor.ENEMY;
+        return heroInitiative >= enemyInitiative ? Turn.Actor.HERO : Turn.Actor.ENEMY;
 
     }
 

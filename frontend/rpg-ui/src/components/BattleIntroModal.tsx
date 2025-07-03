@@ -28,7 +28,7 @@ export default function BattleIntroModal({ hero, enemy, starting, onClose }: Pro
         textAlign: 'center'
       }}>
         <h2>Scontro!</h2>
-        <p><strong>{hero.name} Lv. {hero.level}</strong> ha incontrato <strong>{enemy.name} Lv. {hero.level}</strong>!</p>
+        <p><strong>{hero.name} Lv. {hero.level}</strong> ha incontrato <strong>{enemy.name} Lv. {enemy.level}</strong>!</p>
         <p><strong>{(starting === ActorTypes.HERO ? hero.name : enemy.name)} è stato più veloce, sarà il primo ad attaccare</strong>!</p>
 
         <p>Preparati alla battaglia...</p>

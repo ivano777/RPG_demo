@@ -14,7 +14,7 @@ public class HeroDTO {
     private String name;
 
     /* valori correnti di gioco */
-    private int maxHp = 10;
+    private int maxHp = 5;
     private int gold = 0;
 
     /* progressione globale */

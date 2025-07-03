@@ -38,7 +38,7 @@ public class Hero implements Progressable{
     private String name;
 
     @Min(0)
-    private int maxHp = 10;
+    private int maxHp = 5;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

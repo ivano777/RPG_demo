@@ -11,7 +11,7 @@ import EndBattleModal from '../components/EndBattleModal';
 export default function BattlePage() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  const [battle, setBattle] = useState(state as BattleDTO);   // ✅ adesso è mutabile
+  const [battle, setBattle] = useState(state as BattleDTO);
   const [showModal, setShowModal] = useState(true);
   const [battleEnded, setBattleEnded] = useState(false);
   // ----------------------- state locali -----------------------
@@ -23,6 +23,7 @@ export default function BattlePage() {
   const [loading, setLoading] = useState(false);
   const [log, setLog] = useState<string[]>([]);
   const [reward, setReward] = useState<RewardDTO>();
+  const ENEMY_WAITING_TIME = 0;
 
   useEffect(() => {
     if (!battle.active) {
@@ -43,7 +44,7 @@ export default function BattlePage() {
     if (!showModal && battle.startingPlayer === ActorTypes.ENEMY) {
       setTimeout(() => {
         handlePlayTurn(ActionTypes.SKIP, ActorTypes.ENEMY);
-      }, 500);
+      }, ENEMY_WAITING_TIME);
     }
   }, [showModal]);
 
@@ -75,7 +76,7 @@ export default function BattlePage() {
 
     setLog(prev => {
       const newLog = [...prev, line];
-      return newLog.slice(-5); // tiene solo gli ultimi 5
+      return newLog.slice(-3); // tiene solo gli ultimi 3
     });
   }, [turns]);
   
@@ -96,7 +97,7 @@ export default function BattlePage() {
       if (actor === ActorTypes.HERO && enemyAlive && heroAlive) {
         setTimeout(() => {
           handlePlayTurn(ActionTypes.SKIP, ActorTypes.ENEMY);
-        }, 0);
+        }, ENEMY_WAITING_TIME);
       }
 
     } catch (err) {

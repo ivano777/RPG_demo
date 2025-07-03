@@ -30,8 +30,8 @@
   display: flex;
   flex-direction: column-reverse;
   overflow-y: auto;
-  mask-image: linear-gradient(to top, transparent 0%, black 40%);
-  -webkit-mask-image: linear-gradient(to top, transparent 0%, black 40%);
+  mask-image: linear-gradient(to top, transparent 0%, black 70%);
+  -webkit-mask-image: linear-gradient(to top, transparent 0%, black 70%);
 }
 
 /* Zona hero + azioni in basso */

@@ -10,61 +10,77 @@ import java.util.Optional;
 
 import static dminis.rpg.game.entity.battle.Turn.Actor.ENEMY;
 import static dminis.rpg.game.utility.DiceUtils.*;
+import static dminis.rpg.game.utility.RNGProvider.nextInt;
 
 public class ActionUtils {
-    public static void calculateAttack(Turn newTurn, Battle battle) {
-        int weight = 0;
-        float critMod = 1f;
-        float perfMod = 1f;
-        switch (newTurn.getActor()){
-            case ENEMY -> {
-                int lck = battle.getEnemySnapshot().getLck().getLevel();
-                if(chance(lck)) critMod = 3;
-                if(chance(lck)) perfMod = 0;
-                int dmg = Math.round(rollAtk(battle.getEnemySnapshot()) * critMod);
-                int def = Math.round(rollReactDef(battle.getHeroSnapshot()) * perfMod);
-                weight = Math.max(0, dmg - def);
-                newTurn.setCurrentHeroHp(Math.max(0, newTurn.getCurrentHeroHp() - weight));
-            }
-            case HERO -> {
-                int lck = battle.getEnemySnapshot().getLck().getLevel();
-                if(chance(lck)) critMod = 3;
-                if(chance(lck)) perfMod = 0;
-                int dmg = Math.round(rollAtk(battle.getHeroSnapshot()) * critMod);
-                int def = Math.round(rollReactDef(battle.getEnemySnapshot()) * perfMod);
-                weight = Math.max(0, dmg - def);
-                newTurn.setCurrentEnemyHp(Math.max(0, newTurn.getCurrentEnemyHp() - weight));
-            }
+
+    public static void calculateAttack(Turn turn, Battle battle) {
+
+        // 1. Scegli attaccante e difensore in base all’attore del turno
+        var attacker = turn.getActor() == Turn.Actor.ENEMY
+                ? battle.getEnemySnapshot()
+                : battle.getHeroSnapshot();
+
+        var defender = turn.getActor() == Turn.Actor.ENEMY
+                ? battle.getHeroSnapshot()
+                : battle.getEnemySnapshot();
+
+        // 2. Calcola modificatori critico e perfetto una sola volta
+        int lckLevel = attacker.getLck().getLevel();
+        float critMod = chance(lckLevel) ? 3f : 1f;
+        float perfMod = chance(lckLevel) ? 0f : 1f;
+
+        // 3. Danno finale
+        int dmg = Math.round(rollAtk(attacker) * critMod);
+        int block = Math.round(rollReactDef(defender) * perfMod);
+        //3.1 La difesa passiva scende del 33% ogni volta che viene usata in modo da evitare stalli
+        int staticDef = defender.getDef().getFlat();
+        if(staticDef == 1){
+            if(chance(100 - 33)) staticDef = 0;   //todo mettere questo (e gli altri parametri configurabili)
+        }else {
+            staticDef = Math.round( staticDef * (1 - 0.33f));
         }
-        if(newTurn.getCurrentHeroHp() <= 0){
-            battle.setActive(false);
-            battle.setStatus(Battle.BattleStatus.ENEMY_WIN);
-        }
-        if(newTurn.getCurrentEnemyHp() <= 0){
-            battle.setActive(false);
-            battle.setStatus(Battle.BattleStatus.HERO_WIN);
+        defender.getDef().setFlat(staticDef);
+        int weight = Math.max(0, dmg - block);
+
+        // 4. Aggiorna gli HP corretti
+        if (turn.getActor() == Turn.Actor.ENEMY) {
+            turn.setCurrentHeroHp(Math.max(0, turn.getCurrentHeroHp() - weight));
+        } else {
+            turn.setCurrentEnemyHp(Math.max(0, turn.getCurrentEnemyHp() - weight));
         }
 
-        var action = new Action(Action.ActionType.ATTACK, weight);
-        newTurn.setAction(action);
+        // 5. Controllo vittoria
+        if (turn.getCurrentHeroHp() <= 0 || turn.getCurrentEnemyHp() <= 0) {
+            battle.setActive(false);
+            battle.setStatus(turn.getCurrentHeroHp() <= 0
+                    ? Battle.BattleStatus.ENEMY_WIN
+                    : Battle.BattleStatus.HERO_WIN);
+        }
+
+        // 6. Registra l’azione
+        turn.setAction(new Action(Action.ActionType.ATTACK, weight));
     }
 
-    private static void calculateDefence(Turn newTurn, Battle battle) {
-        int weight = 0;
-        switch (newTurn.getActor()){
-            case ENEMY -> {
-                weight = Math.max(0, rollDef(battle.getEnemySnapshot()));
-                var flatDef = battle.getEnemySnapshot().getDef().getFlat() + weight;
-                battle.getEnemySnapshot().getDef().setFlat(flatDef);
-            }
-            case HERO -> {
-                weight = Math.max(0, rollDef(battle.getHeroSnapshot()));
-                var flatDef = battle.getHeroSnapshot().getDef().getFlat() + weight;
-                battle.getHeroSnapshot().getDef().setFlat(flatDef);
-            }
-        }
-        var action = new Action(Action.ActionType.DEFENCE, weight);
-        newTurn.setAction(action);
+    private static void calculateDefence(Turn turn, Battle battle) {
+        // 1. Scegli lo snapshot corretto in base all’attore
+        var defender = (turn.getActor() == Turn.Actor.ENEMY)
+                ? battle.getEnemySnapshot()
+                : battle.getHeroSnapshot();
+
+
+        // 2. Calcola il bonus di difesa
+        int bonus = Math.max(0, rollDef(defender));
+
+        // 3. Aggiorna la difesa “flat” dello snapshot, deve essere minore del danno massimo dell'avversario
+        //    (meglio sarebbe avere un metodo addFlat(bonus) dentro la classe Defence)
+        var def = defender.getDef();
+        int newFlat = def.getFlat() + bonus;
+        int weight = newFlat - def.getFlat();
+        def.setFlat(newFlat);
+
+        // 4. Registra l’azione nel turno
+        turn.setAction(new Action(Action.ActionType.DEFENCE, weight));
     }
 
     private static void calculateEscape(Turn newTurn, Battle battle) {
@@ -108,11 +124,11 @@ public class ActionUtils {
         var actions = Arrays.stream(Action.ActionType.values())
                 .filter(a -> a != Action.ActionType.ESCAPE)
                 .toList();
-        return actions.get(RNG.nextInt(actions.size()));
+        return actions.get(nextInt(actions.size()));
     }
 
     private static boolean chance(int chance){
-        return RNG.nextInt(100) < Math.min(99, chance);
+        return nextInt(100) < Math.min(99, chance);
     }
 }
 

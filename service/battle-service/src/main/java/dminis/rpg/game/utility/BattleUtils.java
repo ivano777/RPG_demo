@@ -14,30 +14,59 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static dminis.rpg.game.entity.battle.Battle.BattleStatus.HERO_WIN;
+import static dminis.rpg.game.utility.RNGProvider.nextDouble;
 
 public class BattleUtils {
 
     private static final float V_RATEO = 1.5f;
     private static final float E_RATEO = 0.5f;
 
+    private static final float RANGE = 0.3f; //30%
+
 
     public static CharacterSnapshot twist(CharacterSnapshot source){
+        int heroLv = source.getLevel();
+        int atk = randomLvInRange(RANGE,heroLv);
+        int def = randomLvInRange(RANGE,heroLv);
+        int lck = randomLvInRange(RANGE,heroLv);
+        int lv = randomLvInRange(RANGE/2, Math.max(lck, Math.max(atk, def)), 1);
+
         var target = new CharacterSnapshot();
-        target.setLevel(randomInRange(0.3)*source.getLevel());
-        target.setMaxHp(randomInRange(0.3)*source.getMaxHp());
-        target.getAtk().setLevel(randomInRange(0.5)*source.getAtk().getLevel());
-        target.getDef().setLevel(randomInRange(0.5)*source.getDef().getLevel());
-        target.getLck().setLevel(randomInRange(0.5)*source.getLck().getLevel());
+        target.setMaxHp(randomLvInRange(RANGE, source.getMaxHp()));
+        target.getAtk().setLevel(atk);
+        target.getDef().setLevel(def);
+        target.getLck().setLevel(lck);
+        target.setLevel(lv);
+
         return target;
     }
 
     /**
+     * Genera un valore casuale nell'intervallo [1 - delta, 1 + delta] * lv.
+     * Se il parametro direction è:
+     *   > 0: solo incremento [1, 1 + delta] * lv
+     *   < 0: solo decremento [1 - delta, 1] * lv
+     *   = 0: intervallo completo [1 - delta, 1 + delta] * lv
      *
-     * @param delta
-     * @return dato un input x (es. 0.3), generi un numero casuale nell’intervallo [1 - x, 1 + x].
+     * @param delta     ampiezza della variazione
+     * @param lv        valore di base da scalare
+     * @param direction direzione della variazione
+     * @return valore intero casuale scalato
      */
-    public static int randomInRange(double delta) {
-        return (int) Math.round(1.0 - delta + Math.random() * (2 * delta));
+    public static int randomLvInRange(double delta, int lv, int direction) {
+        double factor;
+        if (direction > 0) {
+            factor = 1.0 + nextDouble() * delta;
+        } else if (direction < 0) {
+            factor = 1.0 - delta + nextDouble() * delta;
+        } else {
+            factor = 1.0 - delta + nextDouble() * (2 * delta);
+        }
+        return (int) Math.round(factor * lv);
+    }
+
+    public static int randomLvInRange(double delta, int lv) {
+        return randomLvInRange(delta, lv, 0);
     }
 
     public static void handleRewards(Battle battle, Turn newTurn) {
@@ -84,8 +113,8 @@ public class BattleUtils {
         float hpRatio = (float) remainingHp / maxHp; // da 0.0 (morto) a 1.0 (full HP)
 
         float luckFactor = 1 - hpRatio; // più sei basso, più guadagni
-        float baseLuck = 10f; // scalabile
-        float victoryBonus = isVictory(battle) ? V_RATEO : E_RATEO;
+        float baseLuck = 10f ; // scalabile
+        float victoryBonus = isVictory(battle) ? V_RATEO : (V_RATEO + 0.5f);
 
         float exp = baseLuck * luckFactor * victoryBonus;
         return Math.round(exp);
@@ -115,10 +144,11 @@ public class BattleUtils {
         int totalActions = turns.size();
         if (totalActions == 0) return 0f;
 
-        int relevantWeight = turns.stream()
+        double relevantWeight = turns.stream()
                 .map(Turn::getAction)
                 .filter(actionFilter)
                 .mapToInt(Action::getWeight)
+                .mapToDouble(v -> v <= 0.0 ? 0.5 : (double) v)
                 .sum();
 
         float baseExp = (float) relevantWeight / totalActions * enemyDifficulty * heroLevel;
@@ -153,8 +183,14 @@ public class BattleUtils {
 
         boolean leveled = false;
 
+        if(lvUpHP || lv < hero.getLevel()){
+
+        }
+
         // calcola quanta xp serve a ogni step e livella finché può
-        while (lv < 12 && exp >= xpToNextLevel(lv) && lv <= hero.getLevel()) {
+        while (lv < 12 && exp >= xpToNextLevel(lv) &&
+                (lvUpHP || lv < hero.getLevel()) //prende in considerazione la restrizione sul livello solo se lvUpHp è false (cioè se sto livellando una statistica)
+        ) {
             exp -= xpToNextLevel(lv);
             lvSetter.accept(hero,++lv);
             expSetter.accept(hero, exp);
@@ -163,7 +199,6 @@ public class BattleUtils {
         }
         // se raggiungo il cap 12, azzero xp residua
         if (lv >= 12) {
-            exp=0;
             lvSetter.accept(hero,12);
             expSetter.accept(hero, 0);
         }
@@ -171,11 +206,11 @@ public class BattleUtils {
     }
 
     private static void lvUpHp(Hero hero){
-        hero.setMaxHp(hero.getMaxHp() + 10*hero.getLevel());
+        hero.setMaxHp(hero.getMaxHp() + 5*hero.getLevel());
     }
 
     private static int xpToNextLevel(int currentLV) {
-        return 10 + currentLV * currentLV;
+        return (int) Math.round(10 * Math.pow(currentLV, 2));
     }
 
 
